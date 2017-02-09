@@ -4,7 +4,7 @@ import java.io.FileReader;
 public class Scanner{
     public static void main(String args[]){
         //initialize lexemes
-        
+        LexDic lexemes = new LexDic();
         try{
             //check ba muna kung tamang file type yung ioopen? kunwari check muna kung ".java" siya ganon ganon?
             if(!args[0].endsWith(".jbe")) {
@@ -20,9 +20,9 @@ public class Scanner{
                 String token = "";
                 for(int i = 0 ; i < line.length() ; i++){
                     if(line.charAt(i) == ' '){
-                       //lexemes.print(token, lineNum)
+                       lexemes.printDetails(token, lineNum);
                        while(line.charAt(i) == ' ')  i++;
-                       lexemes.print(token);
+                      System.out.println(token);
                        token = "";
                     } 
                     if(line.charAt(i) == '"'){
@@ -41,7 +41,5 @@ public class Scanner{
         }
     }
 }
-
-//Sho'me12345"Hello World"
 
 
