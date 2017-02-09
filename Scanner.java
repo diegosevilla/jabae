@@ -22,7 +22,6 @@ public class Scanner{
                     if(line.charAt(i) == ' '){
                        lexemes.printDetails(token, lineNum);
                        while(line.charAt(i) == ' ')  i++;
-                      System.out.println(token);
                        token = "";
                     } 
                     if(line.charAt(i) == '"'){
@@ -33,8 +32,8 @@ public class Scanner{
                        token += line.charAt(i);
                     
                 }
-                
-                System.out.println(token);
+
+                lexemes.printDetails(token, lineNum);
             }
         }catch(Exception e){
             e.printStackTrace();

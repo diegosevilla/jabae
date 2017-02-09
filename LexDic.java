@@ -1,3 +1,5 @@
+import java.util.Hashtable;
+
 public class LexDic
 {
 	Hashtable<String, String> lexemes = new Hashtable<String, String>();
@@ -45,12 +47,21 @@ public class LexDic
 
 	public void printDetails(String token, int linenum)
 	{
-		String[] details = lexemes.get(token).split(", ");
-		System.out.println(
-			"Token tag= " + details[0] + 
-			" Lexeme= " + token +
-			" Token type= " + details[1] +
-			" line num:" + linenum
-		);
+		if(lexemes.containsKey(token)){
+			String[] details = lexemes.get(token).split(", ");
+			System.out.println(
+				"Token tag= " + details[0] + 
+				" Lexeme= " + token +
+				" Token type= " + details[1] +
+				" line num:" + linenum
+			);
+		} else {
+			System.out.println(
+				"Token tag= 39" + 
+				" Lexeme= " + token +
+				" Token type= String Literal" +
+				" line num:" + linenum
+			);
+		}
 	}
 }
