@@ -3,6 +3,7 @@ import java.io.FileReader;
 
 public class Scanner{
     public static void main(String args[]){
+        System.out.println(typeOf('a'));
         //initialize lexemes
         LexDic lexemes = new LexDic();
         try{
@@ -30,10 +31,13 @@ public class Scanner{
                        }
                     } else 
                        token += line.charAt(i);
-                    
+                    if(i+1 < line.length() && line.charAt(i+1) != ' ' && lexemes.printDetails(token+line.charAt(i+1), lineNum)){
+                        i++;
+                        token = "";
+                    } else if(lexemes.printDetails(token, lineNum)){
+                        token = "";
+                    }          
                 }
-
-                lexemes.printDetails(token, lineNum);
             }
         }catch(Exception e){
             e.printStackTrace();

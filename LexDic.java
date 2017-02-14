@@ -5,19 +5,19 @@ public class LexDic
 	Hashtable<String, String> lexemes = new Hashtable<String, String>();
 	public LexDic()
 	{
-		lexemes.put("+", "1,Arithmetic");
-		lexemes.put("-", "2,Arithmetic");
-		lexemes.put("*", "3,Arithmetic");
-		lexemes.put("/", "4,Arithmetic");
-		lexemes.put("%", "5,Arithmetic");
-		lexemes.put("(", "6,Group Symbol");
-		lexemes.put(")", "7,Group Symbol");
-		lexemes.put("<", "8,Relational");
-		lexemes.put(">", "9,Relational");
-		lexemes.put("==", "10,Relational");
-		lexemes.put("<=", "11,Relational");
-		lexemes.put(">=", "12,Relational");
-		lexemes.put("!=", "13,Relational");
+		lexemes.put("+", "1, Arithmetic");
+		lexemes.put("-", "2, Arithmetic");
+		lexemes.put("*", "3, Arithmetic");
+		lexemes.put("/", "4, Arithmetic");
+		lexemes.put("%", "5, Arithmetic");
+		lexemes.put("(", "6, Group Symbol");
+		lexemes.put(")", "7, Group Symbol");
+		lexemes.put("<", "8, Relational");
+		lexemes.put(">", "9, Relational");
+		lexemes.put("==", "10, Relational");
+		lexemes.put("<=", "11, Relational");
+		lexemes.put(">=", "12, Relational");
+		lexemes.put("!=", "13, Relational");
 		lexemes.put("&&", "14, Logical");
 		lexemes.put("||", "15, Logical");
 		lexemes.put("++", "16, Unary");
@@ -43,25 +43,24 @@ public class LexDic
 		lexemes.put("tigel", "36, Boolean Value");
 		lexemes.put("YO!", "37, Keyword");
 		lexemes.put("PEACE'OUT!", "38, Keyword");
+		lexemes.put("a", "40, Variable");
+		lexemes.put("b", "40, Variable");
 	}
 
-	public void printDetails(String token, int linenum)
+	public boolean printDetails(String token, int linenum)
 	{
 		if(lexemes.containsKey(token)){
 			String[] details = lexemes.get(token).split(", ");
-			System.out.println(
-				"Token tag= " + details[0] + 
-				" Lexeme= " + token +
-				" Token type= " + details[1] +
-				" line num:" + linenum
-			);
+			System.out.println("Token tag= " + details[0] + " Lexeme= " + token + " Token type= " + details[1] + " line num:" + linenum);
+			return true;
 		} else {
-			System.out.println(
+			/*System.out.println(
 				"Token tag= 39" + 
 				" Lexeme= " + token +
 				" Token type= String Literal" +
 				" line num:" + linenum
-			);
+			);*/
+		      return false;
 		}
 	}
 }
