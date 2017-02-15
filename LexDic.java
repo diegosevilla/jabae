@@ -43,13 +43,11 @@ public class LexDic
 		lexemes.put("tigel", "36, Boolean Value");
 		lexemes.put("YO!", "37, Keyword");
 		lexemes.put("PEACE'OUT!", "38, Keyword");
-		lexemes.put("a", "40, Variable");
-		lexemes.put("b", "40, Variable");
 	}
 
 	public boolean printDetails(String token, int linenum)
 	{
-		if(lexemes.containsKey(token)){
+    		if(lexemes.containsKey(token)){
 			String[] details = lexemes.get(token).split(", ");
 			System.out.println("Token tag= " + details[0] + " Lexeme= " + token + " Token type= " + details[1] + " line num:" + linenum);
 			return true;
