@@ -54,19 +54,25 @@ public class LexDic
 		
 		patterns.put("[\\\"].+[\\\"]", "39, String Literal");
 		patterns.put("[\\\'].[\\\']", "40, Character Literal");
+		
+		//Integer literals in an operation without spaces can't be read
+		//Float literals can't be read because when the decimal point is read
+		//it registers as an integer literal
+		patterns.put("[-+]?[0-9]+\\.?[0-9]+", "43, Float Literal");
+		patterns.put("[-+]?[0-9]+", "42, Integer Literal");
 //		patterns.put("[A-Za-z0-9]+", "41, Variable");
 	}
 
 	public boolean printDetails(String token, int linenum)
 	{	
 		String[] details;
+		System.out.println(token);
 		if(lexemes.containsKey(token)){
 			details = lexemes.get(token).split(", ");
 			System.out.println("Token tag= " + details[0] + " Lexeme= " + token + " Token type= " + details[1] + " line num:" + linenum);
 			return true;
 		} else {
 			Iterator<String> patternIte = patterns.keySet().iterator();
-			
 			while(patternIte.hasNext()) {
 				String currPattern = patternIte.next();
 				if(checkMatch(token, currPattern)){

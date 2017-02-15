@@ -1,6 +1,7 @@
 YO!
 Sho'me        "Hello World"
 Sho'me     'c'
+a=3 + 4
 b=b+a++
 a<=b
 a>b
