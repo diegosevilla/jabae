@@ -3,7 +3,7 @@ import java.io.FileReader;
 
 public class Scanner{
     public static void main(String args[]){
-        System.out.println(typeOf('a'));
+//        System.out.println(typeOf('a'));
         //initialize lexemes
         LexDic lexemes = new LexDic();
         try{
@@ -24,11 +24,15 @@ public class Scanner{
                        lexemes.printDetails(token, lineNum);
                        while(line.charAt(i) == ' ')  i++;
                        token = "";
-                    } 
-                    if(line.charAt(i) == '"'){
-                       for(i++ ; line.charAt(i) != '"' ; i++){
+                    }
+                    if((line.charAt(i) == '"') || (line.charAt(i) == '\'' && line.charAt(i+2) == '\'')){
+                    	//Added quote sign to differentiate string literals
+                       char ide = line.charAt(i);
+                       token += ide;
+                       for(i++ ; line.charAt(i) != ide; i++){
                           token+= line.charAt(i);
                        }
+                       token += ide;
                     } else 
                        token += line.charAt(i);
                     if(i+1 < line.length() && line.charAt(i+1) != ' ' && lexemes.printDetails(token+line.charAt(i+1), lineNum)){

@@ -1,8 +1,14 @@
+import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class LexDic
 {
 	Hashtable<String, String> lexemes = new Hashtable<String, String>();
+	Hashtable<String, String> patterns = new Hashtable<String, String> ();
 	public LexDic()
 	{
 		lexemes.put("+", "1, Arithmetic");
@@ -43,17 +49,32 @@ public class LexDic
 		lexemes.put("tigel", "36, Boolean Value");
 		lexemes.put("YO!", "37, Keyword");
 		lexemes.put("PEACE'OUT!", "38, Keyword");
-		lexemes.put("a", "40, Variable");
-		lexemes.put("b", "40, Variable");
+		lexemes.put("a", "41, Variable");
+		lexemes.put("b", "41, Variable");
+		
+		patterns.put("[\\\"].+[\\\"]", "39, String Literal");
+		patterns.put("[\\\'].[\\\']", "40, Character Literal");
+//		patterns.put("[A-Za-z0-9]+", "41, Variable");
 	}
 
 	public boolean printDetails(String token, int linenum)
-	{
+	{	
+		String[] details;
 		if(lexemes.containsKey(token)){
-			String[] details = lexemes.get(token).split(", ");
+			details = lexemes.get(token).split(", ");
 			System.out.println("Token tag= " + details[0] + " Lexeme= " + token + " Token type= " + details[1] + " line num:" + linenum);
 			return true;
 		} else {
+			Iterator<String> patternIte = patterns.keySet().iterator();
+			
+			while(patternIte.hasNext()) {
+				String currPattern = patternIte.next();
+				if(checkMatch(token, currPattern)){
+					details = patterns.get(currPattern).split(", ");
+					System.out.println("Token tag= " + details[0] + " Lexeme= " + token + " Token type= " + details[1] + " line num:" + linenum);
+					return true;
+				}
+			}
 			/*System.out.println(
 				"Token tag= 39" + 
 				" Lexeme= " + token +
@@ -62,5 +83,13 @@ public class LexDic
 			);*/
 		      return false;
 		}
+	}
+	
+	public boolean checkMatch(String token, String pattern) 
+	{
+		Pattern pat = Pattern.compile(pattern);
+		Matcher m = pat.matcher(token);
+		
+		return m.matches();
 	}
 }
