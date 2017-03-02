@@ -1,14 +1,12 @@
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
-import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class LexDic
 {
 	Hashtable<String, String> lexemes = new Hashtable<String, String>();
-	Hashtable<String, String> patterns = new Hashtable<String, String> ();
+	Hashtable<String, String> patterns = new Hashtable<String, String>();
 	public LexDic()
 	{
 		lexemes.put("+", "1, Arithmetic");
