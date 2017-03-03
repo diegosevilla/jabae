@@ -52,8 +52,8 @@ public class ParseTable
 		Col.put("Pop'till", 14);
 		Col.put("NonStop'till", 15);
 		Col.put("Do'dis", 16);
-		Col.put("Yo'wait", 17);
-		Col.put("How'bowt", 18);
+		Col.put("Yo'Wait", 17);
+		Col.put("How'Bowt", 18);
 		Col.put("Aight", 19);
 		Col.put(":", 20);
 		Col.put("peace", 21);
@@ -80,6 +80,181 @@ public class ParseTable
 		Col.put("$", 42);
 		
 		//parse table
-		Table[0][0] = "";
+		//all cells nulled are error cells
+		for(int i = 0; i < Table.length; i++)
+			for(int j = 0; j < Table[i].length; j++)
+				Table[i][j] = null;
+		
+		//overwrite cells that are not error cells
+		//all production rules reversed for stack
+		//Program
+		Table[1][6] = "PEACEOUT! Statement YO!";
+		
+		//First() and Follow() of Statement still bugged
+		//Table[2][] = "";
+		
+		//If-block
+		Table[3][8] = "Else-block } Statement { ) Condition ( Check'dis";
+		
+		//Else-block
+		Table[4][9] = "Else-block' noh";
+		Table[4][7] = "Epsilon";
+		Table[4][13] = "Epsilon";
+		Table[4][21] = "Epsilon";
+		Table[4][22] = "Epsilon";
+		Table[4][14] = "Epsilon";
+		Table[4][15] = "Epsilon";
+		Table[4][16] = "Epsilon";
+		Table[4][18] = "Epsilon";
+		Table[4][19] = "Epsilon";
+		
+		//Else-block'
+		Table[5][12] = "} Statement {";
+		Table[5][8] = "If-block";
+		
+		//Loop-block
+		Table[6][14] = "} Control-block Statement { ) Condition ( Pop'till";
+		Table[6][15] = "} Control-block Statement { ) Condition ( NonStop'till";
+		Table[6][16] = ") Condition ( NonStop'till } Control-block Statement { Do'dis";
+		
+		//Switch-block
+		Table[7][17] ="} Case-block { ) Expr ( Yo'Wait";
+		
+		//Case-block
+		Table[8][18] = "Case-block' Control-block Statement : Expr How'Bowt";
+		Table[8][19] = "Control-block Statement : Aight";
+
+		//Case-block'
+		Table[9][18] = "Case-block";
+		Table[9][19] = "Case-block";
+		Table[9][13] = "Epsilon";
+		
+		//Control-block
+		Table[10][21] = "peace";
+		Table[10][22] = "shoot";
+		Table[10][13] = "Epsilon";
+		Table[10][18] = "Epsilon";
+		Table[10][19] = "Epsilon";
+
+		//Input
+		Table[11][23] = "id Gimme";
+		
+		//Output
+		Table[12][24] = "Expr Sho'me";
+		
+		//Assignment
+		Table[13][38] = "Expr = id";
+		
+		//Assignment'
+		Table[14][25] = "Expr =";
+		Table[14][8] = "Epsilon";
+		Table[14][14] = "Epsilon";
+		Table[14][15] = "Epsilon";
+		Table[14][16] = "Epsilon";
+		Table[14][17] = "Epsilon";
+		Table[14][23] = "Epsilon";
+		Table[14][24] = "Epsilon";
+		Table[14][26] = "Epsilon";
+		Table[14][27] = "Epsilon";
+		Table[14][28] = "Epsilon";
+		Table[14][29] = "Epsilon";
+		Table[14][38] = "Epsilon";
+		Table[14][7] = "Epsilon";
+		Table[14][13] = "Epsilon";
+		Table[14][21] = "Epsilon";
+		Table[14][22] = "Epsilon";
+		Table[14][18] = "Epsilon";
+		Table[14][19] = "Epsilon";
+		
+		//Declaration
+		Table[15][26] = "Assignment' id digits";
+		Table[15][27] = "Assignment' id ride";
+		Table[15][28] = "Assignment' id moolah";
+		Table[15][29] = "Assignment' id boogaloh";
+		
+		//Condition
+		Table[16][10] = "Condition' Condition''";
+		Table[16][38] = "Condition' Condition''";
+		Table[16][39] = "Condition' Condition''";
+		Table[16][40] = "Condition' Condition''";
+		Table[16][41] = "Condition' Condition''";
+		Table[16][11] = "Epsilon";
+		
+		//Condition'
+		Table[17][30] = "Condition &&";
+		Table[17][31] = "Condition ||";
+		Table[17][11] = "Epsilon";
+		
+		//Condition''
+		Table[18][10] = "Sym expr";
+		Table[18][38] = "Sym expr";
+		Table[18][39] = "Sym expr";
+		Table[18][40] = "Sym expr";
+		Table[18][41] = "Sym expr";
+		
+		//Sym
+		Table[19][32] = "Expr ==";
+		Table[19][33] = "Expr !=";
+		Table[19][34] = "Expr >=";
+		Table[19][35] = "Expr <=";
+		Table[19][36] = "Expr <";
+		Table[19][37] = "Expr >";
+		
+		//Expr
+		Table[20][10] = "";
+		Table[20][38] = "";
+		Table[20][39] = "";
+		Table[20][40] = "";
+		Table[20][41] = "";
+		
+		//Expr'
+		Table[21][1] = "Expr' Term +";
+		Table[21][2] = "Expr' Term -";
+		Table[21][32] = "Epsilon";
+		Table[21][33] = "Epsilon";
+		Table[21][34] = "Epsilon";
+		Table[21][35] = "Epsilon";
+		Table[21][36] = "Epsilon";
+		Table[21][37] = "Epsilon";
+		Table[21][30] = "Epsilon";
+		Table[21][31] = "Epsilon";
+		Table[21][11] = "Epsilon";
+		Table[21][20] = "Epsilon";
+		Table[21][8] = "Epsilon";
+		Table[21][14] = "Epsilon";
+		Table[21][15] = "Epsilon";
+		Table[21][16] = "Epsilon";
+		Table[21][17] = "Epsilon";
+		Table[21][23] = "Epsilon";
+		Table[21][24] = "Epsilon";
+		Table[21][26] = "Epsilon";
+		Table[21][27] = "Epsilon";
+		Table[21][28] = "Epsilon";
+		Table[21][29] = "Epsilon";
+		Table[21][38] = "Epsilon";
+		
+		//Term
+		Table[22][10] = "Term' Factor";
+		Table[22][38] = "Term' Factor";
+		Table[22][39] = "Term' Factor";
+		Table[22][40] = "Term' Factor";
+		Table[22][41] = "Term' Factor";
+		
+		//Term'
+		Table[23][3] = "Term' Factor *";
+		Table[23][4] = "Term' Factor /";
+		Table[23][5] = "Term' Factor %";
+		Table[23][10] = "Epsilon";
+		Table[23][38] = "Epsilon";
+		Table[23][39] = "Epsilon";
+		Table[23][40] = "Epsilon";
+		Table[23][41] = "Epsilon";
+		
+		//Factor
+		Table[24][10] = ") Term (";
+		Table[24][38] = "id";
+		Table[24][39] = "lit";
+		Table[24][40] = "legit";
+		Table[24][41] = "tigel";
 	}
 }
