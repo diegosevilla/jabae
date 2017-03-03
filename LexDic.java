@@ -14,8 +14,8 @@ public class LexDic
 		lexemes.put("*", "3, Arithmetic");
 		lexemes.put("/", "4, Arithmetic");
 		lexemes.put("%", "5, Arithmetic");
-		lexemes.put("YO!", "6, Keyword");
-		lexemes.put("PEACEOUT!", "7, Keyword");
+		lexemes.put("YO!", "6, Program Start");
+		lexemes.put("PEACEOUT!", "7, Program End");
 		lexemes.put("Check'dis", "8, If");
 		lexemes.put("noh", "9, Else");
 		lexemes.put("(", "10, Group Symbol");
