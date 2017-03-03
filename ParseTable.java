@@ -1,3 +1,6 @@
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Deque;
 import java.util.Hashtable;
 
 public class ParseTable
@@ -247,5 +250,47 @@ public class ParseTable
 		Table[24][39] = "lit";
 		Table[24][40] = "legit";
 		Table[24][41] = "tigel";
+	}
+	
+	//recognizer
+	public boolean Valid(ArrayList<String> tokens)
+	{
+        Deque<String> stack = new ArrayDeque<String>();
+        stack.push("$");
+        stack.push("Program");
+        String cell;
+        String[] prodrule;
+		for(int i = 0; i < tokens.size(); i++)
+		{
+			if(Col.contains(stack.peek()))//top is terminal
+			{
+				if(stack.peek().equals(tokens.get(i)))
+				{
+					stack.pop();
+				}
+				else return false;
+			}
+			else if(Row.contains(stack.peek()))//top is non terminal
+			{
+				cell = Table[Row.get(stack.peek())][Col.get(tokens.get(i))];
+				if(cell != null)
+				{
+					prodrule = cell.split(" ");
+					stack.pop();
+					for(int c = 0; c < prodrule.length; c++)
+						stack.push(prodrule[c]);
+				}
+				else return false;
+			}
+			else if(stack.peek().equals("$"))//top is $
+			{
+				if(tokens.get(i).equals("$"))
+				{
+					return true;
+				}
+				else return false;
+			}	
+		}
+		return false;
 	}
 }
