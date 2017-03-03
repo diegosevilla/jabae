@@ -90,23 +90,41 @@ public class ParseTable
 		//Program
 		Table[1][6] = "PEACEOUT! Statement YO!";
 		
-		//First() and Follow() of Statement still bugged
-		//Table[2][] = "";
+		//Statement
+		Table[2][8] = "Statement If-block";
+		Table[2][14] = "Statement Loop-block";
+		Table[2][15] = "Statement Loop-block";
+		Table[2][16] = "Statement Loop-block";
+		Table[2][17] = "Statement Switch-block";
+		Table[2][23] = "Statement Input";
+		Table[2][24] = "Statement Output";
+		Table[2][26] = "Statement Declaration";
+		Table[2][27] = "Statement Declaration";
+		Table[2][28] = "Statement Declaration";
+		Table[2][29] = "Statement Declaration";
+		Table[2][38] = "Statement Assignment";
+		Table[2][7] = "Epsilon";
+		Table[2][13] = "Epsilon";
+		Table[2][21] = "Epsilon";
+		Table[2][22] = "Epsilon";
 		
 		//If-block
 		Table[3][8] = "Else-block } Statement { ) Condition ( Check'dis";
 		
 		//Else-block
 		Table[4][9] = "Else-block' noh";
-		Table[4][7] = "Epsilon";
-		Table[4][13] = "Epsilon";
-		Table[4][21] = "Epsilon";
-		Table[4][22] = "Epsilon";
+		Table[4][8] = "Epsilon";
 		Table[4][14] = "Epsilon";
 		Table[4][15] = "Epsilon";
 		Table[4][16] = "Epsilon";
-		Table[4][18] = "Epsilon";
-		Table[4][19] = "Epsilon";
+		Table[4][17] = "Epsilon";
+		Table[4][23] = "Epsilon";
+		Table[4][24] = "Epsilon";
+		Table[4][26] = "Epsilon";
+		Table[4][27] = "Epsilon";
+		Table[4][28] = "Epsilon";
+		Table[4][29] = "Epsilon";
+		Table[4][38] = "Epsilon";
 		
 		//Else-block'
 		Table[5][12] = "} Statement {";
@@ -159,12 +177,6 @@ public class ParseTable
 		Table[14][28] = "Epsilon";
 		Table[14][29] = "Epsilon";
 		Table[14][38] = "Epsilon";
-		Table[14][7] = "Epsilon";
-		Table[14][13] = "Epsilon";
-		Table[14][21] = "Epsilon";
-		Table[14][22] = "Epsilon";
-		Table[14][18] = "Epsilon";
-		Table[14][19] = "Epsilon";
 		
 		//Declaration
 		Table[15][26] = "Assignment' id digits";
@@ -201,37 +213,18 @@ public class ParseTable
 		Table[19][37] = "Expr >";
 		
 		//Expr
-		Table[20][10] = "";
-		Table[20][38] = "";
-		Table[20][39] = "";
-		Table[20][40] = "";
-		Table[20][41] = "";
+		Table[20][10] = "Expr' Term";
+		Table[20][38] = "Expr' Term";
+		Table[20][39] = "Expr' Term";
+		Table[20][40] = "Expr' Term";
+		Table[20][41] = "Expr' Term";
 		
 		//Expr'
 		Table[21][1] = "Expr' Term +";
 		Table[21][2] = "Expr' Term -";
-		Table[21][32] = "Epsilon";
-		Table[21][33] = "Epsilon";
-		Table[21][34] = "Epsilon";
-		Table[21][35] = "Epsilon";
-		Table[21][36] = "Epsilon";
-		Table[21][37] = "Epsilon";
 		Table[21][30] = "Epsilon";
 		Table[21][31] = "Epsilon";
 		Table[21][11] = "Epsilon";
-		Table[21][20] = "Epsilon";
-		Table[21][8] = "Epsilon";
-		Table[21][14] = "Epsilon";
-		Table[21][15] = "Epsilon";
-		Table[21][16] = "Epsilon";
-		Table[21][17] = "Epsilon";
-		Table[21][23] = "Epsilon";
-		Table[21][24] = "Epsilon";
-		Table[21][26] = "Epsilon";
-		Table[21][27] = "Epsilon";
-		Table[21][28] = "Epsilon";
-		Table[21][29] = "Epsilon";
-		Table[21][38] = "Epsilon";
 		
 		//Term
 		Table[22][10] = "Term' Factor";
@@ -244,11 +237,9 @@ public class ParseTable
 		Table[23][3] = "Term' Factor *";
 		Table[23][4] = "Term' Factor /";
 		Table[23][5] = "Term' Factor %";
-		Table[23][10] = "Epsilon";
-		Table[23][38] = "Epsilon";
-		Table[23][39] = "Epsilon";
-		Table[23][40] = "Epsilon";
-		Table[23][41] = "Epsilon";
+		Table[23][11] = "Epsilon";
+		Table[23][1] = "Epsilon";
+		Table[23][2] = "Epsilon";
 		
 		//Factor
 		Table[24][10] = ") Term (";
