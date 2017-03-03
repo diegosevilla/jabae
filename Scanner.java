@@ -24,7 +24,7 @@ public class Scanner{
                        while(i < line.length() && line.charAt(i) == ' ')  i++;
                        if(!token.equals("") && lexemes.checkToken(token, lineNum)){ //if it matches a keyword or literal, print the details and reset token
                             token = "";
-                       } else iflexemes.checkLongestMatch(token, lineNum)) //else check if token is made up of different lexemes not separated by spaces
+                       } else if(lexemes.checkLongestMatch(token, lineNum)) //else check if token is made up of different lexemes not separated by spaces
                             token = "";
                     }
                     if((line.charAt(i) == '"') || (line.charAt(i) == '\'' && line.charAt(i+2) == '\'')){ //if char or string literal
