@@ -6,6 +6,7 @@ public class Scanner{
 //        System.out.println(typeOf('a'));
         //initialize lexemes
         LexDic lexemes = new LexDic();
+        ParseTable parser = new ParseTable();
         try{
             //check ba muna kung tamang file type yung ioopen? kunwari check muna kung ".java" siya ganon ganon?
             if(!args[0].endsWith(".jbe")) {
