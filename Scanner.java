@@ -41,7 +41,7 @@ public class Scanner{
                         if(lookahead == '.'){
                             token += lookahead;
                             i++;
-                            if( i >= line.length()) break;
+                            if(i  >= line.length()) break;
                             lookahead = line.charAt(i);
                         }
                         boolean currentMatch = lexemes.containsKey(token) || lexemes.hasMatch(token);
