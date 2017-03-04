@@ -19,35 +19,41 @@ public class Scanner{
                 lineNum++;
                 if(line.startsWith("//")) continue; //skip comments
                 String token = "";
-                for(int i = 0 ; i < line.length() ; i++){
-                    if(line.charAt(i) == ' '){ //if space is encountered, check if the token built generates a keyword or a literal
-                       while(i < line.length() && line.charAt(i) == ' ')  i++;
-                       if(!token.equals("") && lexemes.checkToken(token, lineNum)){ //if it matches a keyword or literal, print the details and reset token
-                            token = "";
-                       } else iflexemes.checkLongestMatch(token, lineNum)) //else check if token is made up of different lexemes not separated by spaces
-                            token = "";
-                    }
-                    if((line.charAt(i) == '"') || (line.charAt(i) == '\'' && line.charAt(i+2) == '\'')){ //if char or string literal
-                    	//Added quote sign to differentiate string literals
-                       char ide = line.charAt(i);
-                       token += ide;
-                       for(i++ ; line.charAt(i) != ide; i++){ //get all characters inside the delimiter (" or ')
-                          token+= line.charAt(i);
-                       }
-                       token += ide;
-                    } else 
-                       token += line.charAt(i);
+                for(int i = 0 ; i < line.length() ; ){
+                    do{
+                        token += line.charAt(i++);
+                        while(token.equals(" ") && i < line.length()){
+                          token = "" + line.charAt(i++);
+                        }
+                        if(i >= line.length()) break; // if i exceeds the length, process the temporary string formed
+                        if(token.startsWith("\"") || token.startsWith("\'")){
+                          while(true){
+                            char nextChar = line.charAt(i++);
+                            token += nextChar;
+                            if(nextChar == token.charAt(0))
+                              break;
+                          }
+                          break;
+                        }
+                        char lookahead = line.charAt(i);
+                        if(lookahead == ' ')
+                            break;
+                        if(lookahead == '.'){
+                            token += lookahead;
+                            i++;
+                            if( i >= line.length()) break;
+                            lookahead = line.charAt(i);
+                        }
+                        boolean currentMatch = lexemes.containsKey(token) || lexemes.hasMatch(token);
+                        if(currentMatch && !lexemes.containsKey(token + lookahead) && !lexemes.hasMatch(token + lookahead))
+                            break;
+                    }while(true);
+                    if(lexemes.checkToken(token, lineNum)) //reset if valid
+		                  token = "";
                 }
-                if(!token.equals("") && lexemes.checkToken(token, lineNum)) { //check if whole word matches a keyword or a literal
-                    token = "";
-                } else if(lexemes.checkLongestMatch(token, lineNum)){ // else check if made up of different lexemes not separated by spaces
-                    token = "";
-                }                
             }
         }catch(Exception e){
             e.printStackTrace();
         }
     }
 }
-
-
