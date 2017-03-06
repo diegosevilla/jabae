@@ -65,7 +65,7 @@ public class LexDic
 		String[] details;
 		if(lexemes.containsKey(token)){ //check for keywords
 			details = lexemes.get(token).split(", ");
-			System.out.println("Token tag: " + details[0] + " Lexeme: " + token + " Token type: " + details[1] + " Line_num:" + linenum);
+//			System.out.println("Token tag: " + details[0] + " Lexeme: " + token + " Token type: " + details[1] + " Line_num:" + linenum);
 			return true;
 		} else { //check for literals or variable identifier
 			Iterator<String> patternIte = patterns.keySet().iterator();
@@ -73,7 +73,7 @@ public class LexDic
 				String currPattern = patternIte.next();
 				if(checkMatch(token, currPattern)){
 					details = patterns.get(currPattern).split(", ");
-					System.out.println("Token tag: " + details[0] + " Lexeme: " + token + " Token type: " + details[1] + " Line_num:" + linenum);
+//					System.out.println("Token tag: " + details[0] + " Lexeme: " + token + " Token type: " + details[1] + " Line_num:" + linenum);
 					return true;
 				}
 			}
