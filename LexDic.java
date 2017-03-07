@@ -60,24 +60,26 @@ public class LexDic
 		patterns.put("[a-zA-z][A-Za-z0-9]*", "41, Variable");
 	}
 
-	public boolean checkToken(String token, int linenum)
+	public String[] checkToken(String token, int linenum)
 	{
-		String[] details;
+		String[] details = new String[2];
 		if(lexemes.containsKey(token)){ //check for keywords
-			details = lexemes.get(token).split(", ");
+			details[0] = token;
+			details[1] = lexemes.get(token).split(", ")[1];
 //			System.out.println("Token tag: " + details[0] + " Lexeme: " + token + " Token type: " + details[1] + " Line_num:" + linenum);
-			return true;
+			return details;
 		} else { //check for literals or variable identifier
 			Iterator<String> patternIte = patterns.keySet().iterator();
 			while(patternIte.hasNext()) {
 				String currPattern = patternIte.next();
 				if(checkMatch(token, currPattern)){
-					details = patterns.get(currPattern).split(", ");
+						details[1] = token;
+						details[0] = patterns.get(currPattern).split(", ")[1].equals("Variable")? "id" : "lit";
 //					System.out.println("Token tag: " + details[0] + " Lexeme: " + token + " Token type: " + details[1] + " Line_num:" + linenum);
-					return true;
+					return details;
 				}
 			}
-		    return false;
+		  return null;
 		}
 	}
 
