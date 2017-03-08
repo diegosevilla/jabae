@@ -18,6 +18,7 @@ public class Compiler {
 					System.out.println("Recognized!");
 				else
 					System.out.println("error");
+//				ParseTree.toStringAll(ParseTree.getRoot(parser.pt));
 
 	}
 

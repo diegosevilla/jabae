@@ -8,6 +8,7 @@ public class ParseTable
 	Hashtable<String, Integer> Row = new Hashtable<String, Integer>();
 	Hashtable<String, Integer> Col = new Hashtable<String, Integer>();
 	String[][] Table = new String[25][42];
+	ParseTree pt = null;
 
 	//values with 0 not valid
 	public ParseTable()
@@ -266,6 +267,7 @@ public class ParseTable
         stack.push("$");
         stack.push("Program");
         String cell;
+        String temp;
         String[] prodrule;
 				int i;
 		// for(int i = 0; i < tokens.size(); i++){
@@ -282,7 +284,11 @@ public class ParseTable
 				if(stack.peek().equals(tokens.get(i)[0]))
 				{
 					System.out.println("pop: " + stack.peek() + " token: " + tokens.get(i)[0]);
-					stack.pop();
+					
+					//Check if working
+					ParseTree toggler = ParseTree.findCurrent(stack.pop(), ParseTree.getRoot(pt));
+					toggler.toggleTerminal();
+					
 					System.out.println("final: " + stack.peek());
 					i++;
 				}
@@ -300,7 +306,15 @@ public class ParseTable
 					// 	continue;
 					prodrule = cell.split(" ");
 					System.out.println("pop:" + stack.peek() + " token: " + tokens.get(i)[0]);
-					stack.pop();
+					
+					//Parse Tree
+					temp = stack.pop();
+					if(pt == null){
+						pt = new ParseTree(temp);
+					} else pt = ParseTree.findCurrent(temp, ParseTree.getRoot(pt));
+					System.out.println("Parent: " + pt.symbol);
+					pt.addChildren(prodrule);
+					
 					for(int c = 0; c < prodrule.length; c++){
 						stack.push(prodrule[c]);
 						System.out.println("new: " + stack.peek());
