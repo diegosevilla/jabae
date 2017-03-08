@@ -25,10 +25,10 @@ public class ParseTree implements Iterable<ParseTree> {
 	public void addChildren(String[] children) {		
 		for(String pr : children){
 			ParseTree child = new ParseTree(pr.trim(), this);
-			System.out.println("Child: " + child.symbol + " of Parent: " + child.parent.symbol);
+			//Make terminal if it is epsilon
+			if(child.symbol.equals("Epsilon")) child.toggleTerminal();
 			this.children.add(child);
 		}
-		System.out.println("Parent: " + this.symbol + " has " + this.children.size() + " children");
 	}
 	
 	public void toggleTerminal(){
@@ -54,12 +54,14 @@ public class ParseTree implements Iterable<ParseTree> {
 		
 		return null;
 	}
-//	
-//	public static void toStringAll(ParseTree root) {
-//		System.out.println(root.symbol);
-//		System.out.print("-> ");
-//		for
-//	}
+	
+	public static void toString(ParseTree root, String space, Boolean isChild) {
+		//DFS Printing of ParseTree
+		System.out.println(space + (isChild? "-> ":"") + root.symbol + (root.isTerminal?" (Terminal)":""));
+		for(int i = (root.children.size()-1); i >= 0; i--){
+			ParseTree.toString(root.children.get(i), space+"    ", true);
+		}
+	}
 	@Override
 	public Iterator<ParseTree> iterator() {
 		// TODO Auto-generated method stub
