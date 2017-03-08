@@ -139,9 +139,11 @@ public class ParseTable
 		Table[6][14] = "} Control-block Statement { ) Condition ( Pop'till";
 		Table[6][15] = "} Control-block Statement { ) Condition ( NonStop'till";
 		Table[6][16] = ") Condition ( NonStop'till } Control-block Statement { Do'dis";
+		Table[6][7] = "Epsilon";
 
 		//Switch-block
 		Table[7][17] ="} Case-block { ) Expr ( Yo'Wait";
+		Table[7][7] = "Epsilon";
 
 		//Case-block
 		Table[8][18] = "Case-block' Control-block Statement : Expr How'Bowt";
@@ -250,8 +252,11 @@ public class ParseTable
 		Table[23][1] = "Epsilon";
 		Table[23][2] = "Epsilon";
 		Table[23][7] = "Epsilon";
+		Table[23][Col.get("&&")] = "Epsilon";
+		Table[23][Col.get("||")] = "Epsilon";
 		Table[23][Col.get(">")] = "Epsilon";
 		Table[23][Col.get("}")] = "Epsilon";
+		
 		//Factor
 		Table[24][10] = ") Term (";
 		Table[24][38] = "id";
