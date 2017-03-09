@@ -1,5 +1,5 @@
 YO!
-Check'dis(2 > 2){
+Check'dis(2 < 2) {
   a = a+b
 }
 PEACE'OUT!

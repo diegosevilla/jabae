@@ -14,11 +14,11 @@ public class Compiler {
 				Scanner scanner = new Scanner();
 				ParseTable parser = new ParseTable();
 				ArrayList<String[]> tokens = scanner.scan(args[0]);
-				if(parser.Valid(tokens))
+				if(parser.Valid(tokens)) {
 					System.out.println("Recognized!");
-				else
+					ParseTree.toString(ParseTree.getRoot(parser.pt),"",false);
+				} else
 					System.out.println("error");
-				ParseTree.toString(ParseTree.getRoot(parser.pt),"",false);
 
 	}
 

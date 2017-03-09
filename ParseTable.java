@@ -236,6 +236,7 @@ public class ParseTable
 		Table[21][11] = "Epsilon";
 		Table[21][Col.get("}")] = "Epsilon";
 		Table[21][Col.get(">")] = "Epsilon";
+		Table[21][Col.get("<")] = "Epsilon";
 
 		//Term
 		Table[22][10] = "Term' Factor";
@@ -255,6 +256,7 @@ public class ParseTable
 		Table[23][Col.get("&&")] = "Epsilon";
 		Table[23][Col.get("||")] = "Epsilon";
 		Table[23][Col.get(">")] = "Epsilon";
+		Table[23][Col.get("<")] = "Epsilon";
 		Table[23][Col.get("}")] = "Epsilon";
 		
 		//Factor
@@ -283,16 +285,21 @@ public class ParseTable
 			while(stack.peek().equals("Epsilon")){
 				stack.pop();
 				System.out.println(stack.peek());
+				pt = ParseTree.findCurrent(stack.peek(), ParseTree.goToParent(pt, stack.peek()));
+				System.out.println("Curr: " + pt.symbol);
 			}
 			if(Col.containsKey(stack.peek()))//top is terminal
 			{
 				if(stack.peek().equals(tokens.get(i)[0]))
 				{
 					System.out.println("pop: " + stack.peek() + " token: " + tokens.get(i)[0]);
-					
+					System.out.println("b4 " + pt.symbol + " parent " + (pt.parent==null?"null":pt.parent.symbol));
 					//Check if working
-					ParseTree toggler = ParseTree.findCurrent(stack.pop(), ParseTree.getRoot(pt));
-					toggler.toggleTerminal();
+					pt.toggleTerminal();
+					stack.pop();
+					if(!stack.peek().equals("$"))
+						pt = ParseTree.findCurrent(stack.peek(), ParseTree.goToParent(pt, stack.peek()));
+					System.out.println("Curr: " + pt.symbol);
 					
 					System.out.println("final: " + stack.peek());
 					i++;
@@ -316,14 +323,16 @@ public class ParseTable
 					temp = stack.pop();
 					if(pt == null){
 						pt = new ParseTree(temp);
-					} else pt = ParseTree.findCurrent(temp, ParseTree.getRoot(pt));
+					}
 					System.out.println("Parent: " + pt.symbol);
 					pt.addChildren(prodrule);
 					
 					for(int c = 0; c < prodrule.length; c++){
 						stack.push(prodrule[c]);
-						System.out.println("new: " + stack.peek());
+//						System.out.println("new: " + stack.peek());
 					}
+					pt = ParseTree.findCurrent(stack.peek(), pt);
+					System.out.println("Curr: " + pt.symbol);
 					System.out.println("final:" + stack.peek());
 				}
 				else {

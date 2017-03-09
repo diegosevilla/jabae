@@ -25,6 +25,7 @@ public class ParseTree implements Iterable<ParseTree> {
 	public void addChildren(String[] children) {		
 		for(String pr : children){
 			ParseTree child = new ParseTree(pr.trim(), this);
+			System.out.println("Child of " + this.symbol + " : " + child.symbol);
 			//Make terminal if it is epsilon
 			if(child.symbol.equals("Epsilon")) child.toggleTerminal();
 			this.children.add(child);
@@ -40,6 +41,18 @@ public class ParseTree implements Iterable<ParseTree> {
 			return ParseTree.getRoot(curr.parent);
 		}
 		return curr;
+	}
+	
+	public static ParseTree goToParent(ParseTree curr, String next){
+		if(curr.parent == null) return curr;
+		if(curr.children.size() == 0){
+			return ParseTree.goToParent(curr.parent, next);
+		} else {
+			for(ParseTree cd : curr.children){
+				if(cd.symbol.equals(next)) return curr;
+			}
+			return ParseTree.goToParent(curr.parent, next);
+		}
 	}
 	
 	public static ParseTree findCurrent(String symbol, ParseTree curr){
