@@ -25,7 +25,7 @@ public class ParseTree implements Iterable<ParseTree> {
 	public void addChildren(String[] children) {		
 		for(String pr : children){
 			ParseTree child = new ParseTree(pr.trim(), this);
-			System.out.println("Child of " + this.symbol + " : " + child.symbol);
+//			System.out.println("Child of " + this.symbol + " : " + child.symbol);
 			//Make terminal if it is epsilon
 			if(child.symbol.equals("Epsilon")) child.toggleTerminal();
 			this.children.add(child);

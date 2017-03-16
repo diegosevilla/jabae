@@ -12,11 +12,12 @@ public class Compiler {
             return;
         }
 				Scanner scanner = new Scanner();
+				scanner.lexemes.initResWords();
 				ParseTable parser = new ParseTable();
-				ArrayList<String[]> tokens = scanner.scan(args[0]);
+				ArrayList<IdEntry> tokens = scanner.scan(args[0]);
 				if(parser.Valid(tokens)) {
 					System.out.println("Recognized!");
-					ParseTree.toString(ParseTree.getRoot(parser.pt),"",false);
+					//ParseTree.toString(ParseTree.getRoot(parser.pt),"",false);
 				} else
 					System.out.println("error");
 

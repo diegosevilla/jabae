@@ -1,5 +1,12 @@
 YO!
 Check'dis(2 < 2) {
+  ride b
   a = a+b
 }
+Check'dis(2 < 2) {
+  ride c
+  a = a+b
+}
+ride a
+ride a
 PEACE'OUT!

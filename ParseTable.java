@@ -171,6 +171,7 @@ public class ParseTable
 		Table[13][38] = "Expr = id";
 
 		//Assignment'
+		Table[14][Col.get("PEACE'OUT!")] = "Epsilon";
 		Table[14][25] = "Expr =";
 		Table[14][8] = "Epsilon";
 		Table[14][14] = "Epsilon";
@@ -268,7 +269,7 @@ public class ParseTable
 	}
 
 	//recognizer
-	public boolean Valid(ArrayList<String[]> tokens)
+	public boolean Valid(ArrayList<IdEntry> tokens)
 	{
         Deque<String> stack = new ArrayDeque<String>();
         stack.push("$");
@@ -276,55 +277,72 @@ public class ParseTable
         String cell;
         String temp;
         String[] prodrule;
-				int i;
+		int i;
 		// for(int i = 0; i < tokens.size(); i++){
-		// 	System.out.println(tokens.get(i)[0]);
+		// 	System.out.println(tokens.get(i).name);
 		// }
 		for(i = 0; !stack.peek().equals("$");)
 		{
 			while(stack.peek().equals("Epsilon")){
 				stack.pop();
-				System.out.println(stack.peek());
+//				System.out.println(stack.peek());
 				pt = ParseTree.findCurrent(stack.peek(), ParseTree.goToParent(pt, stack.peek()));
-				System.out.println("Curr: " + pt.symbol);
+//				System.out.println("Curr: " + pt.symbol);
 			}
 			if(Col.containsKey(stack.peek()))//top is terminal
 			{
-				if(stack.peek().equals(tokens.get(i)[0]))
+				if(stack.peek().equals(tokens.get(i).name))
 				{
-					System.out.println("pop: " + stack.peek() + " token: " + tokens.get(i)[0]);
-					System.out.println("b4 " + pt.symbol + " parent " + (pt.parent==null?"null":pt.parent.symbol));
+					System.out.println("pop: " + stack.peek() + " token: " + tokens.get(i).name);
+//					System.out.println("b4 " + pt.symbol + " parent " + (pt.parent==null?"null":pt.parent.symbol));
 					//Check if working
 					pt.toggleTerminal();
-					stack.pop();
+					String popped = stack.pop();
+					if(popped.equals("YO!")){
+						SymbolTable.enterBlock();
+					}
+					if(popped.equals("{")){
+						SymbolTable.enterBlock();
+					}
+					if(popped.equals("}")){
+						SymbolTable.leaveBlock();
+					}
+					if(popped.equals("id")){
+						IdEntry entry = SymbolTable.idLookup(tokens.get(i).token, 0);
+						if(entry == null)
+						{
+							entry = SymbolTable.install(tokens.get(i).token, 2);
+						}
+						System.out.println(entry);
+					}
 					if(!stack.peek().equals("$"))
 						pt = ParseTree.findCurrent(stack.peek(), ParseTree.goToParent(pt, stack.peek()));
-					System.out.println("Curr: " + pt.symbol);
+//					System.out.println("Curr: " + pt.symbol);
 					
-					System.out.println("final: " + stack.peek());
+//					System.out.println("final: " + stack.peek());
 					i++;
 				}
 				else {
-					System.out.println("Error in " + tokens.get(i)[0]);
+//					System.out.println("Error in " + tokens.get(i).name);
 					return false;
 				}
 			}
 			else if(Row.containsKey(stack.peek()))//top is non terminal
 			{
-				cell = Table[Row.get(stack.peek())][Col.get(tokens.get(i)[0])];
+				cell = Table[Row.get(stack.peek())][Col.get(tokens.get(i).name)];
 				if(cell != null)
 				{
 					// if(cell.equals("Epsilon"))
 					// 	continue;
 					prodrule = cell.split(" ");
-					System.out.println("pop:" + stack.peek() + " token: " + tokens.get(i)[0]);
+//					System.out.println("pop:" + stack.peek() + " token: " + tokens.get(i).name);
 					
 					//Parse Tree
 					temp = stack.pop();
 					if(pt == null){
 						pt = new ParseTree(temp);
 					}
-					System.out.println("Parent: " + pt.symbol);
+//					System.out.println("Parent: " + pt.symbol);
 					pt.addChildren(prodrule);
 					
 					for(int c = 0; c < prodrule.length; c++){
@@ -332,16 +350,16 @@ public class ParseTable
 //						System.out.println("new: " + stack.peek());
 					}
 					pt = ParseTree.findCurrent(stack.peek(), pt);
-					System.out.println("Curr: " + pt.symbol);
-					System.out.println("final:" + stack.peek());
+//					System.out.println("Curr: " + pt.symbol);
+//					System.out.println("final:" + stack.peek());
 				}
 				else {
-					System.out.println("Error in " + tokens.get(i)[0]);
+					System.out.println("Error in " + tokens.get(i).name);
 					return false;
 				}
 			}
 		}
-		if(tokens.get(i)[0].equals("$"))
+		if(tokens.get(i).name.equals("$"))
 			return true;
 		else
 			return false;

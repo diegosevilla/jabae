@@ -3,14 +3,14 @@ import java.io.FileReader;
 import java.util.ArrayList;
 
 public class Scanner{
-    LexDic lexemes;
+	SymbolTable lexemes;
 
     public Scanner(){
-      lexemes = new LexDic();
+      lexemes = new SymbolTable();
     }
 
-    public ArrayList<String[]> scan(String filename){
-        ArrayList<String[]> tokens = new ArrayList<String[]>();
+    public ArrayList<IdEntry> scan(String filename){
+        ArrayList<IdEntry> tokens = new ArrayList<IdEntry>();
         try{
             BufferedReader br = new BufferedReader(new FileReader(filename));
             String line;
@@ -48,7 +48,7 @@ public class Scanner{
                         if(currentMatch && !lexemes.containsKey(token + lookahead) && !lexemes.hasMatch(token + lookahead))
                             break;
                     }while(true);
-                    String[] tokenDetails = lexemes.checkToken(token, lineNum);
+                    IdEntry tokenDetails = lexemes.checkToken(token, lineNum);
                     if(tokenDetails != null) {
                       tokens.add(tokenDetails);
                       token = "";
@@ -58,8 +58,7 @@ public class Scanner{
         }catch(Exception e){
             e.printStackTrace();
         }
-        String[] terminal = new String[2];
-        terminal[0] = "$";
+        IdEntry terminal = new IdEntry("$", 1);
         tokens.add(terminal);
         return tokens;
     }
