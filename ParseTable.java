@@ -237,7 +237,20 @@ public class ParseTable
 		Table[21][11] = "Epsilon";
 		Table[21][Col.get("}")] = "Epsilon";
 		Table[21][Col.get(">")] = "Epsilon";
-		Table[21][Col.get("<")] = "Epsilon";
+		Table[21][Col.get(">")] = "Epsilon";
+		Table[21][Col.get("==")] = "Epsilon";
+		Table[21][8] = "Epsilon";
+		Table[21][14] = "Epsilon";
+		Table[21][15] = "Epsilon";
+		Table[21][16] = "Epsilon";
+		Table[21][17] = "Epsilon";
+		Table[21][23] = "Epsilon";
+		Table[21][24] = "Epsilon";
+		Table[21][26] = "Epsilon";
+		Table[21][27] = "Epsilon";
+		Table[21][28] = "Epsilon";
+		Table[21][29] = "Epsilon";
+		Table[21][38] = "Epsilon";
 
 		//Term
 		Table[22][10] = "Term' Factor";
@@ -258,7 +271,21 @@ public class ParseTable
 		Table[23][Col.get("||")] = "Epsilon";
 		Table[23][Col.get(">")] = "Epsilon";
 		Table[23][Col.get("<")] = "Epsilon";
+		Table[21][Col.get(">")] = "Epsilon";
 		Table[23][Col.get("}")] = "Epsilon";
+		Table[23][Col.get("==")] = "Epsilon";
+		Table[23][8] = "Epsilon";
+		Table[23][14] = "Epsilon";
+		Table[23][15] = "Epsilon";
+		Table[23][16] = "Epsilon";
+		Table[23][17] = "Epsilon";
+		Table[23][23] = "Epsilon";
+		Table[23][24] = "Epsilon";
+		Table[23][26] = "Epsilon";
+		Table[23][27] = "Epsilon";
+		Table[23][28] = "Epsilon";
+		Table[23][29] = "Epsilon";
+		Table[23][38] = "Epsilon";
 		
 		//Factor
 		Table[24][10] = ") Term (";
@@ -266,6 +293,17 @@ public class ParseTable
 		Table[24][39] = "lit";
 		Table[24][40] = "legit";
 		Table[24][41] = "tigel";
+		Table[24][8] = "Epsilon";
+		Table[24][14] = "Epsilon";
+		Table[24][15] = "Epsilon";
+		Table[24][16] = "Epsilon";
+		Table[24][17] = "Epsilon";
+		Table[24][23] = "Epsilon";
+		Table[24][24] = "Epsilon";
+		Table[24][26] = "Epsilon";
+		Table[24][27] = "Epsilon";
+		Table[24][28] = "Epsilon";
+		Table[24][29] = "Epsilon";
 	}
 
 	//recognizer
@@ -278,9 +316,8 @@ public class ParseTable
         String temp;
         String[] prodrule;
 		int i;
-		// for(int i = 0; i < tokens.size(); i++){
-		// 	System.out.println(tokens.get(i).name);
-		// }
+		boolean declaration = false;
+
 		for(i = 0; !stack.peek().equals("$");)
 		{
 			while(stack.peek().equals("Epsilon")){
@@ -293,7 +330,7 @@ public class ParseTable
 			{
 				if(stack.peek().equals(tokens.get(i).name))
 				{
-					System.out.println("pop: " + stack.peek() + " token: " + tokens.get(i).name);
+//					System.out.println("pop: " + stack.peek() + " token: " + tokens.get(i).name);
 //					System.out.println("b4 " + pt.symbol + " parent " + (pt.parent==null?"null":pt.parent.symbol));
 					//Check if working
 					pt.toggleTerminal();
@@ -307,13 +344,35 @@ public class ParseTable
 					if(popped.equals("}")){
 						SymbolTable.leaveBlock();
 					}
+					if(popped.equals("digits") || popped.equals("ride") || popped.equals("moolah") || popped.equals("boogaloh"))
+					{
+						declaration = true;
+					}
 					if(popped.equals("id")){
 						IdEntry entry = SymbolTable.idLookup(tokens.get(i).token, 0);
-						if(entry == null)
+						if(declaration)
 						{
-							entry = SymbolTable.install(tokens.get(i).token, 2);
+							if(entry == null)
+							{
+								entry = SymbolTable.install(tokens.get(i).token, 0);
+							}
+							else
+							{
+								System.out.println(tokens.get(i).token + " already declared.");
+							}
+							declaration = false;
 						}
-						System.out.println(entry);
+						else
+						{
+							if(entry == null)
+							{
+								System.out.println(tokens.get(i).token + " not found.");
+							}
+							else
+							{
+								System.out.println(tokens.get(i).token + " found.");	
+							}
+						}
 					}
 					if(!stack.peek().equals("$"))
 						pt = ParseTree.findCurrent(stack.peek(), ParseTree.goToParent(pt, stack.peek()));
@@ -323,7 +382,7 @@ public class ParseTable
 					i++;
 				}
 				else {
-//					System.out.println("Error in " + tokens.get(i).name);
+//					System.out.println("Error in " + tokens.get(i).name + " " + stack.peek());
 					return false;
 				}
 			}
@@ -354,7 +413,7 @@ public class ParseTable
 //					System.out.println("final:" + stack.peek());
 				}
 				else {
-					System.out.println("Error in " + tokens.get(i).name);
+//					System.out.println("Error in " + tokens.get(i).name + " " + stack.peek());
 					return false;
 				}
 			}
