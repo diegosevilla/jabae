@@ -6,13 +6,12 @@ public class IdEntry {
 	int blockLevel;
 	String scope;
 	int offset;
+	int linenum;
 	
-	public IdEntry(String name, String dataType, int blockLevel, String scope, int offset) {
+	public IdEntry(String name, String dataType, int blockLevel) {
 		this.name = name;
 		this.dataType = dataType;
 		this.blockLevel = blockLevel;
-		this.scope = scope;
-		this.offset = offset;
 	}
 
 	public IdEntry(String name, int blockLevel) {
@@ -20,9 +19,16 @@ public class IdEntry {
 		this.blockLevel = blockLevel;
 	}
 
-	public IdEntry(String name, String token) {
+	public IdEntry(String name, int linenum, String token) {
 		this.name = name;
 		this.token = token;
+		this.linenum = linenum;
+	}
+
+	public IdEntry(String name, String dataType, String token) {
+		this.name = name;
+		this.token = token;
+		this.dataType = dataType;
 	}
 	
 	public String toString(){

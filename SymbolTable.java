@@ -58,12 +58,12 @@ public class SymbolTable
 		lexemes.add("legit");
 		lexemes.add("tigel");
 		patterns.put("[\\\"].+[\\\"]", "39, String Literal");
-		patterns.put("[\\\'].[\\\']", "40, Character Literal");
+		patterns.put("[\\\'].[\\\']", "40, ride");
 		//Integer literals in an operation without spaces can't be read
 		//Float literals can't be read because when the decimal point is read
 		//it registers as an integer literal
-		patterns.put("[-+]?[0-9]+\\.[0-9]+", "43, Float Literal");
-		patterns.put("[-+]?[0-9]+", "42, Integer Literal");
+		patterns.put("[-+]?[0-9]+\\.[0-9]+", "43, moolah");
+		patterns.put("[-+]?[0-9]+", "42, digits");
 		patterns.put("[a-zA-z][A-Za-z0-9]*", "41, Variable");
 	}
 
@@ -103,15 +103,16 @@ public class SymbolTable
 			{
 				Hashtable<String, IdEntry> table = idTable.get(blkLevel);
 				if(table.containsKey(name)){
-					System.out.println("Found " + name + " at blockLevel " + blkLevel);
-					return table.get(name);
+					IdEntry entry = table.get(name);
+//					System.out.println("Found " + name + " of data type " + entry.dataType + " at blockLevel " + blkLevel);
+					return entry;
 				} 
 			}
 			return null;
 		}
 	}
 	
-	public static IdEntry install(String name, int blkLevel) //blkLevel optional
+	public static IdEntry install(String name, int blkLevel, String dataType) //blkLevel optional
 	{
 		if(blkLevel <= 1)
 			blkLevel = blockLevel;
@@ -119,10 +120,10 @@ public class SymbolTable
 		if(table.containsKey(name)){
 			return null;
 		}
-		IdEntry newEntry = new IdEntry(name, blkLevel);
+		IdEntry newEntry = new IdEntry(name, dataType, blkLevel);
 		table = idTable.get(blkLevel);
 		table.put(name, newEntry);
-		System.out.println("Created " + name + " at blockLevel " + blkLevel);
+//		System.out.println("Created " + name + " at blockLevel " + blkLevel);
 		return newEntry;
 	}
 
@@ -130,14 +131,15 @@ public class SymbolTable
 	{
 		Hashtable<String, IdEntry> varTable = idTable.get(1);
 		if(varTable.containsKey(token)){ //check for keywords
-			return varTable.get(token);
+			IdEntry newEntry = new IdEntry(token, linenum, token);
+			return newEntry;
 		} else { //check for literals or variable identifier
 			Iterator<String> patternIte = patterns.keySet().iterator();
 			while(patternIte.hasNext()) {
 				String currPattern = patternIte.next();
 				if(checkMatch(token, currPattern)){
 					String name = patterns.get(currPattern).split(", ")[1].equals("Variable")? "id" : "lit";
-					IdEntry newEntry = new IdEntry(name, token);
+					IdEntry newEntry = new IdEntry(name, linenum, token);
 //					System.out.println("Token tag: " + details[0] + " Lexeme: " + token + " Token type: " + details[1] + " Line_num:" + linenum);
 					return newEntry;
 				}
@@ -161,7 +163,7 @@ public class SymbolTable
 			    	return true;
 		    }
 	    }
-	    return false        ;
+	    return false;
 	}
 
 	public boolean checkMatch(String token, String pattern)

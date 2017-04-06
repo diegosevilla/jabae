@@ -17,10 +17,10 @@ public class Scanner{
             int lineNum = 0;
             while((line = br.readLine()) != null){
                 lineNum++;
+                line = line.trim();
                 if(line.startsWith("//")) continue; //skip comments
                 String token = "";
                 for(int i = 0 ; i < line.length() ; ){
-                    line = line.trim();
                     do{
                         token += line.charAt(i++);
                         while(token.equals(" ") && i < line.length()){

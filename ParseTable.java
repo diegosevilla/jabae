@@ -2,6 +2,8 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
 import java.util.Hashtable;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class ParseTable
 {
@@ -9,6 +11,11 @@ public class ParseTable
 	Hashtable<String, Integer> Col = new Hashtable<String, Integer>();
 	String[][] Table = new String[25][42];
 	ParseTree pt = null;
+	String[][] pattern = new String[][]{
+								{"[\\\'].[\\\']", "ride"}, 
+								{"[-+]?[0-9]+\\.[0-9]+", "moolah"}, 
+								{"[-+]?[0-9]+", "digits"}
+							 };
 
 	//values with 0 not valid
 	public ParseTable()
@@ -316,7 +323,7 @@ public class ParseTable
         String temp;
         String[] prodrule;
 		int i;
-		boolean declaration = false;
+		String declaration = null;
 
 		for(i = 0; !stack.peek().equals("$");)
 		{
@@ -346,33 +353,50 @@ public class ParseTable
 					}
 					if(popped.equals("digits") || popped.equals("ride") || popped.equals("moolah") || popped.equals("boogaloh"))
 					{
-						declaration = true;
+						declaration = popped;
 					}
-					if(popped.equals("id")){
-						IdEntry entry = SymbolTable.idLookup(tokens.get(i).token, 0);
-						if(declaration)
+					if(popped.equals("id") || popped.equals("lit"))
+					{
+						if(popped.equals("id")) 
+							SemanticAction.checkdec(declaration, tokens.get(i));
+
+						if(	tokens.get(i+1).name.equals("=") 	|| 
+							tokens.get(i+1).name.equals("<") 	|| 
+							tokens.get(i+1).name.equals(">") 	|| 
+							tokens.get(i+1).name.equals("<=") 	|| 
+							tokens.get(i+1).name.equals(">=") 	|| 
+							tokens.get(i+1).name.equals("==") 	|| 
+							tokens.get(i+1).name.equals("!=") 	||
+							tokens.get(i+1).name.equals("+") 	|| 
+							tokens.get(i+1).name.equals("-") 	|| 
+							tokens.get(i+1).name.equals("*") 	|| 
+							tokens.get(i+1).name.equals("/") 	|| 
+							tokens.get(i+1).name.equals("%") 	|| 
+							tokens.get(i+1).name.equals("||") 	|| 
+							tokens.get(i+1).name.equals("&&"))
 						{
-							if(entry == null)
-							{
-								entry = SymbolTable.install(tokens.get(i).token, 0);
+							IdEntry curr; 
+							if(tokens.get(i).name.equals("id"))
+								curr = SymbolTable.idLookup(tokens.get(i).token,0);
+							else {
+								curr = new IdEntry(tokens.get(i).name, getDataType(tokens.get(i)), tokens.get(i).token);
+							} 
+							curr.linenum = tokens.get(i).linenum;
+							String look1 = tokens.get(i+1).name;
+							IdEntry look2;
+							IdEntry temp1 = tokens.get(i+2);
+							if(temp1.name.equals("id"))
+								look2 = SymbolTable.idLookup(temp1.token, 0);
+							else if(temp1.name.equals("lit")){
+								look2 = new IdEntry(temp1.name, getDataType(temp1), temp1.token);
+								look2.linenum = temp1.linenum;
 							}
-							else
-							{
-								System.out.println(tokens.get(i).token + " already declared.");
-							}
-							declaration = false;
+							else 
+								look2 = null;
+
+							SemanticAction.checkMatch(curr, look1, look2);
 						}
-						else
-						{
-							if(entry == null)
-							{
-								System.out.println(tokens.get(i).token + " not found.");
-							}
-							else
-							{
-								System.out.println(tokens.get(i).token + " found.");	
-							}
-						}
+						declaration = null;
 					}
 					if(!stack.peek().equals("$"))
 						pt = ParseTree.findCurrent(stack.peek(), ParseTree.goToParent(pt, stack.peek()));
@@ -383,6 +407,7 @@ public class ParseTable
 				}
 				else {
 //					System.out.println("Error in " + tokens.get(i).name + " " + stack.peek());
+					Error.addError(tokens.get(i).linenum, "Syntax Error: Error at token " + tokens.get(i).name);
 					return false;
 				}
 			}
@@ -414,6 +439,7 @@ public class ParseTable
 				}
 				else {
 //					System.out.println("Error in " + tokens.get(i).name + " " + stack.peek());
+					Error.addError(tokens.get(i).linenum, "Syntax Error: Error at token " + tokens.get(i).name);
 					return false;
 				}
 			}
@@ -422,5 +448,16 @@ public class ParseTable
 			return true;
 		else
 			return false;
+	}
+
+	public String getDataType(IdEntry token){
+		for(int i = 0 ; i < pattern.length ; i++)
+		{
+			Pattern pat = Pattern.compile(pattern[i][0]);
+			Matcher m = pat.matcher(token.token);
+
+			if(m.matches()) return pattern[i][1];
+		}
+		return "";
 	}
 }
