@@ -1,22 +1,24 @@
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import org.w3c.dom.Node;
 
 public class ParseTable
 {
 	Hashtable<String, Integer> Row = new Hashtable<String, Integer>();
 	Hashtable<String, Integer> Col = new Hashtable<String, Integer>();
 	String[][] Table = new String[25][42];
-	ParseTree pt = null;
 	String[][] pattern = new String[][]{
 								{"[\\\'].[\\\']", "ride"}, 
 								{"[-+]?[0-9]+\\.[0-9]+", "moolah"}, 
 								{"[-+]?[0-9]+", "digits"}
 							 };
-
+	BodyNode ast;
 	//values with 0 not valid
 	public ParseTable()
 	{
@@ -29,7 +31,7 @@ public class ParseTable
 		Row.put("Loop-block", 6);
 		Row.put("Switch-block", 7);
 		Row.put("Case-block", 8);
-		Row.put("Cas-block'", 9);
+		Row.put("Case-block'", 9);
 		Row.put("Control-block", 10);
 		Row.put("Input", 11);
 		Row.put("Output", 12);
@@ -317,6 +319,8 @@ public class ParseTable
 	public boolean Valid(ArrayList<IdEntry> tokens)
 	{
         Deque<String> stack = new ArrayDeque<String>();
+        Deque<ASTNode> nodeStack = new ArrayDeque<ASTNode>();
+        
         stack.push("$");
         stack.push("Program");
         String cell;
@@ -329,21 +333,19 @@ public class ParseTable
 		{
 			while(stack.peek().equals("Epsilon")){
 				stack.pop();
-//				System.out.println(stack.peek());
-				pt = ParseTree.findCurrent(stack.peek(), ParseTree.goToParent(pt, stack.peek()));
-//				System.out.println("Curr: " + pt.symbol);
 			}
 			if(Col.containsKey(stack.peek()))//top is terminal
 			{
 				if(stack.peek().equals(tokens.get(i).name))
 				{
-//					System.out.println("pop: " + stack.peek() + " token: " + tokens.get(i).name);
-//					System.out.println("b4 " + pt.symbol + " parent " + (pt.parent==null?"null":pt.parent.symbol));
-					//Check if working
-					pt.toggleTerminal();
+					System.out.println("pop: " + stack.peek() + " token: " + tokens.get(i).name + " val: " + tokens.get(i).token);
 					String popped = stack.pop();
 					if(popped.equals("YO!")){
 						SymbolTable.enterBlock();
+						nodeStack.push(new BodyNode("body","program"));
+					}
+					if(popped.equals("PEACE'OUT!")) {
+						ast = (BodyNode) nodeStack.pop();
 					}
 					if(popped.equals("{")){
 						SymbolTable.enterBlock();
@@ -356,7 +358,16 @@ public class ParseTable
 						declaration = popped;
 					}
 					if(popped.equals("id") || popped.equals("lit"))
-					{
+					{	
+//						if(nodeStack.peek() instanceof OpNode) {
+//							OpNode tmp = (OpNode) nodeStack.peek();
+//							if(tmp.token.equals("plchldr")) {
+//								tmp.left = new LeafNode(popped, tokens.get(i).token);
+//							} else if(tmp.type.equals("")){
+//								tmp.right = new LeafNode(popped, tokens.get(i).token)
+//							}
+//						} else
+//						
 						if(popped.equals("id")) 
 							SemanticAction.checkdec(declaration, tokens.get(i));
 
@@ -397,18 +408,14 @@ public class ParseTable
 							SemanticAction.checkMatch(curr, look1, look2);
 						}
 						declaration = null;
-					}
-					if(!stack.peek().equals("$"))
-						pt = ParseTree.findCurrent(stack.peek(), ParseTree.goToParent(pt, stack.peek()));
-//					System.out.println("Curr: " + pt.symbol);
 					
-//					System.out.println("final: " + stack.peek());
 					i++;
 				}
 				else {
 //					System.out.println("Error in " + tokens.get(i).name + " " + stack.peek());
 					Error.addError(tokens.get(i).linenum, "Syntax Error: Error at token " + tokens.get(i).name);
 					return false;
+				}
 				}
 			}
 			else if(Row.containsKey(stack.peek()))//top is non terminal
@@ -419,23 +426,29 @@ public class ParseTable
 					// if(cell.equals("Epsilon"))
 					// 	continue;
 					prodrule = cell.split(" ");
-//					System.out.println("pop:" + stack.peek() + " token: " + tokens.get(i).name);
+					System.out.println("pop:" + stack.peek() + " token: " + tokens.get(i).name + " val: " + tokens.get(i).token);
 					
 					//Parse Tree
-					temp = stack.pop();
-					if(pt == null){
-						pt = new ParseTree(temp);
-					}
-//					System.out.println("Parent: " + pt.symbol);
-					pt.addChildren(prodrule);
+					temp = stack.pop().trim();
+					if(temp.equals("If-block")) {
+						nodeStack.push(new IfNode("branch", tokens.get(i).name));
+					
+					} else if(temp.equals("Else-block")) {
+						if(!prodrule[0].equals("Epsilon") && prodrule[0].equals("{")) {
+								IfNode tmp = (IfNode) nodeStack.peek();
+								tmp.elseBody = new BodyNode("else", "else");
+							
+						} else {
+							IfNode tmp1 = (IfNode) nodeStack.pop();
+							BodyNode tmp2 = (BodyNode) nodeStack.peek();
+							tmp2.bodyChildren.add(tmp1);
+						}
+				    }
 					
 					for(int c = 0; c < prodrule.length; c++){
 						stack.push(prodrule[c]);
-//						System.out.println("new: " + stack.peek());
+						System.out.println("new: " + stack.peek());
 					}
-					pt = ParseTree.findCurrent(stack.peek(), pt);
-//					System.out.println("Curr: " + pt.symbol);
-//					System.out.println("final:" + stack.peek());
 				}
 				else {
 //					System.out.println("Error in " + tokens.get(i).name + " " + stack.peek());
@@ -444,8 +457,10 @@ public class ParseTable
 				}
 			}
 		}
-		if(tokens.get(i).name.equals("$"))
+		if(tokens.get(i).name.equals("$")) {
+			
 			return true;
+		}
 		else
 			return false;
 	}
