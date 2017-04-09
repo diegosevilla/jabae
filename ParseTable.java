@@ -6,19 +6,18 @@ import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.w3c.dom.Node;
-
 public class ParseTable
 {
 	Hashtable<String, Integer> Row = new Hashtable<String, Integer>();
 	Hashtable<String, Integer> Col = new Hashtable<String, Integer>();
+	ASTNode ast;
 	String[][] Table = new String[25][42];
 	String[][] pattern = new String[][]{
 								{"[\\\'].[\\\']", "ride"}, 
 								{"[-+]?[0-9]+\\.[0-9]+", "moolah"}, 
 								{"[-+]?[0-9]+", "digits"}
 							 };
-	BodyNode ast;
+
 	//values with 0 not valid
 	public ParseTable()
 	{
@@ -31,7 +30,7 @@ public class ParseTable
 		Row.put("Loop-block", 6);
 		Row.put("Switch-block", 7);
 		Row.put("Case-block", 8);
-		Row.put("Case-block'", 9);
+		Row.put("Cas-block'", 9);
 		Row.put("Control-block", 10);
 		Row.put("Input", 11);
 		Row.put("Output", 12);
@@ -319,8 +318,8 @@ public class ParseTable
 	public boolean Valid(ArrayList<IdEntry> tokens)
 	{
         Deque<String> stack = new ArrayDeque<String>();
-        Deque<ASTNode> nodeStack = new ArrayDeque<ASTNode>();
-        
+        Deque<String> opStack = new ArrayDeque<String>();
+        HashMap<String, ASTNode> nodes = new HashMap<String, ASTNode>();
         stack.push("$");
         stack.push("Program");
         String cell;
@@ -333,19 +332,26 @@ public class ParseTable
 		{
 			while(stack.peek().equals("Epsilon")){
 				stack.pop();
+//				System.out.println(stack.peek());
 			}
 			if(Col.containsKey(stack.peek()))//top is terminal
 			{
 				if(stack.peek().equals(tokens.get(i).name))
 				{
-					System.out.println("pop: " + stack.peek() + " token: " + tokens.get(i).name + " val: " + tokens.get(i).token);
+					System.out.println("pop: " + stack.peek() + " token: " + tokens.get(i).name);
 					String popped = stack.pop();
 					if(popped.equals("YO!")){
 						SymbolTable.enterBlock();
-						nodeStack.push(new BodyNode("body","program"));
+						//Starts the creation of AST
+						System.out.println("Pushing 'program'");
+						opStack.push("program");
+						nodes.put(opStack.peek(), new ASTNode(opStack.peek(), opStack.peek()));
 					}
 					if(popped.equals("PEACE'OUT!")) {
-						ast = (BodyNode) nodeStack.pop();
+						//Pops the top node and uses it as the AST
+						System.out.println("Operator: " + opStack.peek());
+						ast = nodes.get(opStack.peek());
+						nodes.remove(opStack.pop());
 					}
 					if(popped.equals("{")){
 						SymbolTable.enterBlock();
@@ -358,16 +364,7 @@ public class ParseTable
 						declaration = popped;
 					}
 					if(popped.equals("id") || popped.equals("lit"))
-					{	
-//						if(nodeStack.peek() instanceof OpNode) {
-//							OpNode tmp = (OpNode) nodeStack.peek();
-//							if(tmp.token.equals("plchldr")) {
-//								tmp.left = new LeafNode(popped, tokens.get(i).token);
-//							} else if(tmp.type.equals("")){
-//								tmp.right = new LeafNode(popped, tokens.get(i).token)
-//							}
-//						} else
-//						
+					{
 						if(popped.equals("id")) 
 							SemanticAction.checkdec(declaration, tokens.get(i));
 
@@ -408,14 +405,15 @@ public class ParseTable
 							SemanticAction.checkMatch(curr, look1, look2);
 						}
 						declaration = null;
+					}
 					
+//					System.out.println("final: " + stack.peek());
 					i++;
 				}
 				else {
 //					System.out.println("Error in " + tokens.get(i).name + " " + stack.peek());
 					Error.addError(tokens.get(i).linenum, "Syntax Error: Error at token " + tokens.get(i).name);
 					return false;
-				}
 				}
 			}
 			else if(Row.containsKey(stack.peek()))//top is non terminal
@@ -426,24 +424,87 @@ public class ParseTable
 					// if(cell.equals("Epsilon"))
 					// 	continue;
 					prodrule = cell.split(" ");
-					System.out.println("pop:" + stack.peek() + " token: " + tokens.get(i).name + " val: " + tokens.get(i).token);
+					System.out.println("pop:" + stack.peek() + " token: " + tokens.get(i).name);
 					
 					//Parse Tree
-					temp = stack.pop().trim();
+					temp = stack.pop();
+					if(temp.equals("Statement")) {
+						
+					}
 					if(temp.equals("If-block")) {
-						nodeStack.push(new IfNode("branch", tokens.get(i).name));
-					
-					} else if(temp.equals("Else-block")) {
-						if(!prodrule[0].equals("Epsilon") && prodrule[0].equals("{")) {
-								IfNode tmp = (IfNode) nodeStack.peek();
-								tmp.elseBody = new BodyNode("else", "else");
-							
-						} else {
-							IfNode tmp1 = (IfNode) nodeStack.pop();
-							BodyNode tmp2 = (BodyNode) nodeStack.peek();
-							tmp2.bodyChildren.add(tmp1);
+						//Push If-block to op stack
+						System.out.println("Pushing " + temp + " & creating node with token " + tokens.get(i).name);
+						opStack.push(temp);
+						nodes.put(temp, new ASTNode("branch", tokens.get(i).name));
+					}
+					if(temp.equals("Else-block")) {
+						//If-block body is finished
+						if(prodrule[0].equals("Epsilon")) {
+							//No else is added
+							String popd = opStack.pop();
+							System.out.println("Popping " + popd + " TOS: " + opStack.peek());
+							nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
+							nodes.remove(popd);
 						}
-				    }
+					}
+					if(temp.equals("Condition")) {
+						if(!opStack.peek().equals(temp)) { 
+							//Push Condition to op stack
+							System.out.println("Pushing " + temp + " & creating node with token 'plchldr'");
+							opStack.push(temp);
+							nodes.put(temp, new ASTNode("condition", "plchldr"));
+						}
+					}
+					if(temp.equals("Condition'")) {
+						//Condition operator is finished
+						String popd = opStack.pop();
+						System.out.println("Popping " + popd + " TOS: " + opStack.peek());
+						nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
+						nodes.remove(popd);
+						if(prodrule[0].equals("Epsilon")) {
+							popd = opStack.pop();
+							System.out.println("Popping " + popd + " TOS: " + opStack.peek());
+							nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
+							nodes.remove(popd);
+						} else { //TEST
+							//Lookahead as there is new condition
+							popd = opStack.pop();
+							System.out.println("Popping " + popd + " TOS: " + opStack.peek());
+							ASTNode tmpNode = nodes.get(popd);
+							nodes.remove(popd);
+							
+							//Push Condition to op stack and adding the prev cond node to children of new cond node
+							System.out.println("Pushing " + prodrule[0] + " & creating node with token " + prodrule[1]);
+							opStack.push(prodrule[0]);
+							nodes.put(prodrule[0], new ASTNode("condition", prodrule[1]));
+							nodes.get(prodrule[0]).bodyChildren.add(tmpNode);
+						}
+					}
+					if(temp.equals("Sym")) {
+						String popd = opStack.pop();
+						System.out.println("Popping " + popd + " TOS: " + opStack.peek());
+						if(opStack.peek().equals("Condition")) {
+							//LHS is finished
+							nodes.get(opStack.peek()).token = prodrule[1];
+							nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
+							nodes.remove(popd);
+							System.out.println("OPERATOR " + nodes.get(opStack.peek()).token);
+						}
+					}
+					if(temp.equals("Expr'")) {
+						
+					}
+					if(temp.equals("Term'")) {
+						
+					}
+					if(temp.equals("Factor")) {
+						if(!prodrule[0].equals("(")) {
+							//TODO: fix syntax error at legit and tigel
+							System.out.println("Pushing leaf & creating node with token " + tokens.get(i).token);
+							opStack.push("leaf");
+							nodes.put("leaf", new ASTNode(tokens.get(i).name, tokens.get(i).token));
+						}
+					}
 					
 					for(int c = 0; c < prodrule.length; c++){
 						stack.push(prodrule[c]);
@@ -457,10 +518,8 @@ public class ParseTable
 				}
 			}
 		}
-		if(tokens.get(i).name.equals("$")) {
-			
+		if(tokens.get(i).name.equals("$"))
 			return true;
-		}
 		else
 			return false;
 	}

@@ -1,32 +1,20 @@
 import java.util.ArrayList;
 
-public abstract class ASTNode {
+public class ASTNode {
 	String type;
 	String token;
-//	String value;
+	String value;
 
-//	ArrayList<ASTPair> branchChildren;
-//	ArrayList<ASTNode> bodyChildren;
-//	ASTNode left;
-//	ASTNode right;
-//	ASTNode child;
-//	
-//	public ASTNode(String ty, String to) {
-//		type = ty;
-//		token = to;
-//		branchChildren = null;
-//		left = null;
-//		right = null;
-//		child = null;
-//	}
+	ArrayList<ASTNode> bodyChildren;
 	
-//	public ASTNode(String daty, String ty) {
-//		type = ty;
-//		branchChildren = null;
-//		left = null;
-//		right = null;
-//		child = null;
-//	}
-	
-//	public add
+	public ASTNode(String ty, String to) {
+		type = ty;
+		token = to;
+		if(ty.equals("branch") ||
+		  ty.equals("program") ||
+		  ty.equals("condition")) {
+			bodyChildren = new ArrayList<ASTNode> ();
+		}
+	}
+
 }
