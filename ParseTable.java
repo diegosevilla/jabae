@@ -11,7 +11,7 @@ public class ParseTable
 	Hashtable<String, Integer> Row = new Hashtable<String, Integer>();
 	Hashtable<String, Integer> Col = new Hashtable<String, Integer>();
 	ASTNode ast;
-	String[][] Table = new String[25][42];
+	String[][] Table = new String[25][43];
 	String[][] pattern = new String[][]{
 								{"[\\\'].[\\\']", "ride"}, 
 								{"[-+]?[0-9]+\\.[0-9]+", "moolah"}, 
@@ -30,7 +30,7 @@ public class ParseTable
 		Row.put("Loop-block", 6);
 		Row.put("Switch-block", 7);
 		Row.put("Case-block", 8);
-		Row.put("Cas-block'", 9);
+		Row.put("Case-block'", 9);
 		Row.put("Control-block", 10);
 		Row.put("Input", 11);
 		Row.put("Output", 12);
@@ -48,45 +48,45 @@ public class ParseTable
 		Row.put("Factor", 24);
 
 		//column names
-		Col.put("+", 1);
-		Col.put("-", 2);
-		Col.put("*", 3);
-		Col.put("/", 4);
-		Col.put("%", 5);
-		Col.put("YO!", 6);
-		Col.put("PEACE'OUT!", 7);
-		Col.put("Check'dis", 8);
-		Col.put("noh", 9);
-		Col.put("(", 10);
-		Col.put(")", 11);
-		Col.put("{", 12);
-		Col.put("}", 13);
-		Col.put("Pop'till", 14);
-		Col.put("NonStop'till", 15);
-		Col.put("Do'dis", 16);
-		Col.put("Yo'Wait", 17);
-		Col.put("How'Bowt", 18);
-		Col.put("Aight", 19);
-		Col.put(":", 20);
-		Col.put("peace", 21);
-		Col.put("shoot", 22);
-		Col.put("Gimme", 23);
-		Col.put("Sho'me", 24);
-		Col.put("=", 25);
-		Col.put("digits", 26);
-		Col.put("ride", 27);
-		Col.put("moolah", 28);
-		Col.put("boogaloh", 29);
-		Col.put("&&", 30);
-		Col.put("||", 31);
-		Col.put("==", 32);
-		Col.put("!=", 33);
-		Col.put(">=", 34);
-		Col.put("<=", 35);
-		Col.put("<", 36);
-		Col.put(">", 37);
-		Col.put("id", 38);
-		Col.put("lit", 39);
+		Col.put("YO!", 1);
+		Col.put("PEACEOUT!", 2);
+		Col.put("Check'dis", 3);
+		Col.put("noh", 4);
+		Col.put("Pop'till", 5);
+		Col.put("NonStop'till", 6);
+		Col.put("Do'dis", 7);
+		Col.put("Yo'wait", 8);
+		Col.put("How'Bowt", 9);
+		Col.put("Aight", 10);
+		Col.put("peace", 11);
+		Col.put("shoot", 12);
+		Col.put("Gimme", 13);
+		Col.put("Sho'me", 14);
+		Col.put("digits", 15);
+		Col.put("ride", 16);
+		Col.put("moolah", 17);
+		Col.put("boogaloh", 18);
+		Col.put("&&", 19);
+		Col.put("||", 20);
+		Col.put("==", 21);
+		Col.put("!=", 22);
+		Col.put(">=", 23);
+		Col.put("<=", 24);
+		Col.put("<", 25);
+		Col.put(">", 26);
+		Col.put("+", 27);
+		Col.put("-", 28);
+		Col.put("*", 29);
+		Col.put("/", 30);
+		Col.put("%", 31);
+		Col.put("=", 32);
+		Col.put(":", 33);
+		Col.put("{", 34);
+		Col.put("}", 35);
+		Col.put("(", 36);
+		Col.put(")", 37);
+		Col.put("Identifier", 38);
+		Col.put("Literal", 39);
 		Col.put("legit", 40);
 		Col.put("tigel", 41);
 		Col.put("$", 42);
@@ -100,218 +100,207 @@ public class ParseTable
 		//overwrite cells that are not error cells
 		//all production rules reversed for stack
 		//Program
-		Table[1][6] = "PEACE'OUT! Statement YO!";
-
+		Table[Row.get("Program")][Col.get("YO!")] = "PEACEOUT! Statement YO!";
+		
 		//Statement
-		Table[2][8] = "Statement If-block";
-		Table[2][14] = "Statement Loop-block";
-		Table[2][15] = "Statement Loop-block";
-		Table[2][16] = "Statement Loop-block";
-		Table[2][17] = "Statement Switch-block";
-		Table[2][23] = "Statement Input";
-		Table[2][24] = "Statement Output";
-		Table[2][26] = "Statement Declaration";
-		Table[2][27] = "Statement Declaration";
-		Table[2][28] = "Statement Declaration";
-		Table[2][29] = "Statement Declaration";
-		Table[2][38] = "Statement Assignment";
-		Table[2][7] = "Epsilon";
-		Table[2][13] = "Epsilon";
-		Table[2][21] = "Epsilon";
-		Table[2][22] = "Epsilon";
-
+		Table[Row.get("Statement")][Col.get("Check'dis")] = "Statement If-block";
+		Table[Row.get("Statement")][Col.get("Pop'till")] = "Statement Loop-block";
+		Table[Row.get("Statement")][Col.get("NonStop'till")] = "Statement Loop-block";
+		Table[Row.get("Statement")][Col.get("Do'dis")] = "Statement Loop-block";
+		Table[Row.get("Statement")][Col.get("Yo'wait")] = "Statement Switch-block";
+		Table[Row.get("Statement")][Col.get("Gimme")] = "Statement Input";
+		Table[Row.get("Statement")][Col.get("Sho'me")] = "Statement Output";
+		Table[Row.get("Statement")][Col.get("digits")] = "Statement Declaration";
+		Table[Row.get("Statement")][Col.get("ride")] = "Statement Declaration";
+		Table[Row.get("Statement")][Col.get("moolah")] = "Statement Declaration";
+		Table[Row.get("Statement")][Col.get("boogaloh")] = "Statement Declaration";
+		Table[Row.get("Statement")][Col.get("Identifier")] = "Statement Assignment";
+		Table[Row.get("Statement")][Col.get("PEACEOUT!")] = "Epsilon";
+		Table[Row.get("Statement")][Col.get("}")] = "Epsilon";
+		Table[Row.get("Statement")][Col.get("peace")] = "Epsilon";
+		Table[Row.get("Statement")][Col.get("shoot")] = "Epsilon";
+		
 		//If-block
-		Table[3][8] = "Else-block } Statement { ) Condition ( Check'dis";
-
+		Table[Row.get("If-block")][Col.get("Check'dis")] = "Else-block } Statement { ) Condition ( Check'dis";
+		
 		//Else-block
-		Table[4][7] = "Epsilon";
-		Table[4][9] = "Else-block' noh";
-		Table[4][8] = "Epsilon";
-		Table[4][14] = "Epsilon";
-		Table[4][15] = "Epsilon";
-		Table[4][16] = "Epsilon";
-		Table[4][17] = "Epsilon";
-		Table[4][23] = "Epsilon";
-		Table[4][24] = "Epsilon";
-		Table[4][26] = "Epsilon";
-		Table[4][27] = "Epsilon";
-		Table[4][28] = "Epsilon";
-		Table[4][29] = "Epsilon";
-		Table[4][38] = "Epsilon";
-
+		Table[Row.get("Else-block")][Col.get("noh")] = "Else-block' noh";
+		Table[Row.get("Else-block")][Col.get("PEACEOUT!")] = "Epsilon";
+		Table[Row.get("Else-block")][Col.get("}")] = "Epsilon";
+		Table[Row.get("Else-block")][Col.get("peace")] = "Epsilon";
+		Table[Row.get("Else-block")][Col.get("shoot")] = "Epsilon";
+		Table[Row.get("Else-block")][Col.get("Check'dis")] = "Epsilon";
+		Table[Row.get("Else-block")][Col.get("Pop'till")] = "Epsilon";
+		Table[Row.get("Else-block")][Col.get("NonStop'till")] = "Epsilon";
+		Table[Row.get("Else-block")][Col.get("Do'dis")] = "Epsilon";
+		Table[Row.get("Else-block")][Col.get("Yo'wait")] = "Epsilon";
+		Table[Row.get("Else-block")][Col.get("Gimme")] = "Epsilon";
+		Table[Row.get("Else-block")][Col.get("Sho'me")] = "Epsilon";
+		Table[Row.get("Else-block")][Col.get("digits")] = "Epsilon";
+		Table[Row.get("Else-block")][Col.get("ride")] = "Epsilon";
+		Table[Row.get("Else-block")][Col.get("moolah")] = "Epsilon";
+		Table[Row.get("Else-block")][Col.get("boogaloh")] = "Epsilon";
+		Table[Row.get("Else-block")][Col.get("Identifier")] = "Epsilon";
+		
 		//Else-block'
-		Table[5][12] = "} Statement {";
-		Table[5][8] = "If-block";
-
+		Table[Row.get("Else-block'")][Col.get("{")] = "} Statement {";
+		
 		//Loop-block
-		Table[6][14] = "} Control-block Statement { ) Condition ( Pop'till";
-		Table[6][15] = "} Control-block Statement { ) Condition ( NonStop'till";
-		Table[6][16] = ") Condition ( NonStop'till } Control-block Statement { Do'dis";
-		Table[6][7] = "Epsilon";
-
+		Table[Row.get("Loop-block")][Col.get("Pop'till")] = "";
+		Table[Row.get("Loop-block")][Col.get("NonStop'till")] = "";
+		Table[Row.get("Loop-block")][Col.get("Do'dis")] = "";
+		
 		//Switch-block
-		Table[7][17] ="} Case-block { ) Expr ( Yo'Wait";
-		Table[7][7] = "Epsilon";
-
+		Table[Row.get("Switch-block")][Col.get("Yo'wait")] = "";
+		
 		//Case-block
-		Table[8][18] = "Case-block' Control-block Statement : Expr How'Bowt";
-		Table[8][19] = "Control-block Statement : Aight";
-
+		Table[Row.get("Case-block")][Col.get("How'Bowt")] = "Case-block' Control-block Statement : Expr How'Bowt";
+		Table[Row.get("Case-block")][Col.get("Aight")] = "Control-block Statement : Aight";
+		
 		//Case-block'
-		Table[9][18] = "Case-block";
-		Table[9][19] = "Case-block";
-		Table[9][13] = "Epsilon";
+		Table[Row.get("Case-block'")][Col.get("How'Bowt")] = "Case-block";
+		Table[Row.get("Case-block'")][Col.get("Aight")] = "Case-block";
+		Table[Row.get("Case-block'")][Col.get("}")] = "Epsilon";
 
 		//Control-block
-		Table[10][21] = "peace";
-		Table[10][22] = "shoot";
-		Table[10][13] = "Epsilon";
-		Table[10][18] = "Epsilon";
-		Table[10][19] = "Epsilon";
-
+		Table[Row.get("Control-block")][Col.get("peace")] = "peace";
+		Table[Row.get("Control-block")][Col.get("shoot")] = "shoot";
+		Table[Row.get("Control-block")][Col.get("}")] = "Epsilon";
+		Table[Row.get("Control-block")][Col.get("How'Bowt")] = "Epsilon";
+		Table[Row.get("Control-block")][Col.get("Aight")] = "Epsilon";
+		
 		//Input
-		Table[11][23] = "id Gimme";
-
+		Table[Row.get("Input")][Col.get("Gimme")] = "Identifier Gimme";
+		
 		//Output
-		Table[12][24] = "Expr Sho'me";
-
+		Table[Row.get("Output")][Col.get("Sho'me")] = "Expr Sho'me";
+		
 		//Assignment
-		Table[13][38] = "Expr = id";
-
+		Table[Row.get("Assignment")][Col.get("Identifier")] = "Expr = Identifier";
+			
 		//Assignment'
-		Table[14][Col.get("PEACE'OUT!")] = "Epsilon";
-		Table[14][25] = "Expr =";
-		Table[14][8] = "Epsilon";
-		Table[14][14] = "Epsilon";
-		Table[14][15] = "Epsilon";
-		Table[14][16] = "Epsilon";
-		Table[14][17] = "Epsilon";
-		Table[14][23] = "Epsilon";
-		Table[14][24] = "Epsilon";
-		Table[14][26] = "Epsilon";
-		Table[14][27] = "Epsilon";
-		Table[14][28] = "Epsilon";
-		Table[14][29] = "Epsilon";
-		Table[14][38] = "Epsilon";
-
+		Table[Row.get("Assignment'")][Col.get("=")] = "Expr =";
+		Table[Row.get("Assignment'")][Col.get("Check'dis")] = "Epsilon";
+		Table[Row.get("Assignment'")][Col.get("Pop'till")] = "Epsilon";
+		Table[Row.get("Assignment'")][Col.get("NonStop'till")] = "Epsilon";
+		Table[Row.get("Assignment'")][Col.get("Do'dis")] = "Epsilon";
+		Table[Row.get("Assignment'")][Col.get("Yo'wait")] = "Epsilon";
+		Table[Row.get("Assignment'")][Col.get("Gimme")] = "Epsilon";
+		Table[Row.get("Assignment'")][Col.get("Sho'me")] = "Epsilon";
+		Table[Row.get("Assignment'")][Col.get("digits")] = "Epsilon";
+		Table[Row.get("Assignment'")][Col.get("ride")] = "Epsilon";
+		Table[Row.get("Assignment'")][Col.get("moolah")] = "Epsilon";
+		Table[Row.get("Assignment'")][Col.get("boogaloh")] = "Epsilon";
+		Table[Row.get("Assignment'")][Col.get("Identifier")] = "Epsilon";	
+		
 		//Declaration
-		Table[15][26] = "Assignment' id digits";
-		Table[15][27] = "Assignment' id ride";
-		Table[15][28] = "Assignment' id moolah";
-		Table[15][29] = "Assignment' id boogaloh";
-
+		Table[Row.get("Declaration")][Col.get("digits")] = "Assignment' Identifier digits";
+		Table[Row.get("Declaration")][Col.get("ride")] = "Assignment' Identifier ride";
+		Table[Row.get("Declaration")][Col.get("moolah")] = "Assignment' Identifier moolah";
+		Table[Row.get("Declaration")][Col.get("boogaloh")] = "Assignment' Identifier boogaloh";
+		
 		//Condition
-		Table[16][10] = "Condition' Condition''";
-		Table[16][38] = "Condition' Condition''";
-		Table[16][39] = "Condition' Condition''";
-		Table[16][40] = "Condition' Condition''";
-		Table[16][41] = "Condition' Condition''";
-		Table[16][11] = "Epsilon";
+		Table[Row.get("Condition")][Col.get("(")] = "Condition' Condition''";
+		Table[Row.get("Condition")][Col.get("Identifier")] = "Condition' Condition''";
+		Table[Row.get("Condition")][Col.get("Literal")] = "Condition' Condition''";
+		Table[Row.get("Condition")][Col.get("legit")] = "Condition' Condition''";
+		Table[Row.get("Condition")][Col.get("tigel")] = "Condition' Condition''";
 
 		//Condition'
-		Table[17][30] = "Condition &&";
-		Table[17][31] = "Condition ||";
-		Table[17][11] = "Epsilon";
-
+		Table[Row.get("Condition'")][Col.get("&&")] = "Condition &&";
+		Table[Row.get("Condition'")][Col.get("||")] = "Condition ||";
+		Table[Row.get("Condition'")][Col.get(")")] = "Epsilon";
+		
 		//Condition''
-		Table[18][10] = "Sym Expr";
-		Table[18][38] = "Sym Expr";
-		Table[18][39] = "Sym Expr";
-		Table[18][40] = "Sym Expr";
-		Table[18][41] = "Sym Expr";
-
+		Table[Row.get("Condition''")][Col.get("(")] = "Sym Expr";
+		Table[Row.get("Condition''")][Col.get("Identifier")] = "Sym Expr";
+		Table[Row.get("Condition''")][Col.get("Literal")] = "Sym Expr";
+		Table[Row.get("Condition''")][Col.get("legit")] = "Sym Expr";
+		Table[Row.get("Condition''")][Col.get("tigel")] = "Sym Expr";
+		
 		//Sym
-		Table[19][32] = "Expr ==";
-		Table[19][33] = "Expr !=";
-		Table[19][34] = "Expr >=";
-		Table[19][35] = "Expr <=";
-		Table[19][36] = "Expr <";
-		Table[19][37] = "Expr >";
-
+		Table[Row.get("Sym")][Col.get("==")] = "Expr ==";
+		Table[Row.get("Sym")][Col.get("!=")] = "Expr !=";
+		Table[Row.get("Sym")][Col.get(">=")] = "Expr >=";
+		Table[Row.get("Sym")][Col.get("<=")] = "Expr <=";
+		Table[Row.get("Sym")][Col.get("<")] = "Expr <";
+		Table[Row.get("Sym")][Col.get(">")] = "Expr >";
+		
 		//Expr
-		Table[20][10] = "Expr' Term";
-		Table[20][38] = "Expr' Term";
-		Table[20][39] = "Expr' Term";
-		Table[20][40] = "Expr' Term";
-		Table[20][41] = "Expr' Term";
-		Table[20][7] = "Epsilon";
-
+		Table[Row.get("Expr")][Col.get("(")] = "Expr' Term";
+		Table[Row.get("Expr")][Col.get("Identifier")] = "Expr' Term";
+		Table[Row.get("Expr")][Col.get("Literal")] = "Expr' Term";
+		Table[Row.get("Expr")][Col.get("legit")] = "Expr' Term";
+		Table[Row.get("Expr")][Col.get("tigel")] = "Expr' Term";
+		
 		//Expr'
-		Table[21][1] = "Expr' Term +";
-		Table[21][2] = "Expr' Term -";
-		Table[21][7] = "Epsilon";
-		Table[21][30] = "Epsilon";
-		Table[21][31] = "Epsilon";
-		Table[21][11] = "Epsilon";
-		Table[21][Col.get("}")] = "Epsilon";
-		Table[21][Col.get(">")] = "Epsilon";
-		Table[21][Col.get(">")] = "Epsilon";
-		Table[21][Col.get("==")] = "Epsilon";
-		Table[21][8] = "Epsilon";
-		Table[21][14] = "Epsilon";
-		Table[21][15] = "Epsilon";
-		Table[21][16] = "Epsilon";
-		Table[21][17] = "Epsilon";
-		Table[21][23] = "Epsilon";
-		Table[21][24] = "Epsilon";
-		Table[21][26] = "Epsilon";
-		Table[21][27] = "Epsilon";
-		Table[21][28] = "Epsilon";
-		Table[21][29] = "Epsilon";
-		Table[21][38] = "Epsilon";
-
+		Table[Row.get("Expr'")][Col.get("+")] = "Expr' Term +";
+		Table[Row.get("Expr'")][Col.get("-")] = "Expr' Term -";
+		Table[Row.get("Expr'")][Col.get("}")] = "Epsilon";
+		Table[Row.get("Expr'")][Col.get(")")] = "Epsilon";
+		Table[Row.get("Expr'")][Col.get(":")] = "Epsilon";
+		Table[Row.get("Expr'")][Col.get("==")] = "Epsilon";
+		Table[Row.get("Expr'")][Col.get("!=")] = "Epsilon";
+		Table[Row.get("Expr'")][Col.get(">=")] = "Epsilon";
+		Table[Row.get("Expr'")][Col.get("<=")] = "Epsilon";
+		Table[Row.get("Expr'")][Col.get("<")] = "Epsilon";
+		Table[Row.get("Expr'")][Col.get(">")] = "Epsilon";
+		Table[Row.get("Expr'")][Col.get("Check'dis")] = "Epsilon";
+		Table[Row.get("Expr'")][Col.get("Pop'till")] = "Epsilon";
+		Table[Row.get("Expr'")][Col.get("NonStop'till")] = "Epsilon";
+		Table[Row.get("Expr'")][Col.get("Do'dis")] = "Epsilon";
+		Table[Row.get("Expr'")][Col.get("Yo'wait")] = "Epsilon";
+		Table[Row.get("Expr'")][Col.get("Gimme")] = "Epsilon";
+		Table[Row.get("Expr'")][Col.get("Sho'me")] = "Epsilon";
+		Table[Row.get("Expr'")][Col.get("digits")] = "Epsilon";
+		Table[Row.get("Expr'")][Col.get("ride")] = "Epsilon";
+		Table[Row.get("Expr'")][Col.get("moolah")] = "Epsilon";
+		Table[Row.get("Expr'")][Col.get("boogaloh")] = "Epsilon";
+		Table[Row.get("Expr'")][Col.get("Identifier")] = "Epsilon";
+		
 		//Term
-		Table[22][10] = "Term' Factor";
-		Table[22][38] = "Term' Factor";
-		Table[22][39] = "Term' Factor";
-		Table[22][40] = "Term' Factor";
-		Table[22][41] = "Term' Factor";
-
+		Table[Row.get("Term")][Col.get("(")] = "Term' Factor";
+		Table[Row.get("Term")][Col.get("Identifier")] = "Term' Factor";
+		Table[Row.get("Term")][Col.get("Literal")] = "Term' Factor";
+		Table[Row.get("Term")][Col.get("legit")] = "Term' Factor";
+		Table[Row.get("Term")][Col.get("tigel")] = "Term' Factor";
+		
 		//Term'
-		Table[23][3] = "Term' Factor *";
-		Table[23][4] = "Term' Factor /";
-		Table[23][5] = "Term' Factor %";
-		Table[23][11] = "Epsilon";
-		Table[23][1] = "Epsilon";
-		Table[23][2] = "Epsilon";
-		Table[23][7] = "Epsilon";
-		Table[23][Col.get("&&")] = "Epsilon";
-		Table[23][Col.get("||")] = "Epsilon";
-		Table[23][Col.get(">")] = "Epsilon";
-		Table[23][Col.get("<")] = "Epsilon";
-		Table[21][Col.get(">")] = "Epsilon";
-		Table[23][Col.get("}")] = "Epsilon";
-		Table[23][Col.get("==")] = "Epsilon";
-		Table[23][8] = "Epsilon";
-		Table[23][14] = "Epsilon";
-		Table[23][15] = "Epsilon";
-		Table[23][16] = "Epsilon";
-		Table[23][17] = "Epsilon";
-		Table[23][23] = "Epsilon";
-		Table[23][24] = "Epsilon";
-		Table[23][26] = "Epsilon";
-		Table[23][27] = "Epsilon";
-		Table[23][28] = "Epsilon";
-		Table[23][29] = "Epsilon";
-		Table[23][38] = "Epsilon";
+		Table[Row.get("Term'")][Col.get("*")] = "Term' Factor *";
+		Table[Row.get("Term'")][Col.get("/")] = "Term' Factor /";
+		Table[Row.get("Term'")][Col.get("%")] = "Term' Factor %";
+		Table[Row.get("Term'")][Col.get("}")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get(")")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get(":")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get("==")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get("!=")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get(">=")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get("<=")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get("<")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get(">")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get("Check'dis")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get("Pop'till")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get("NonStop'till")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get("Do'dis")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get("Yo'wait")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get("Gimme")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get("Sho'me")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get("digits")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get("ride")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get("moolah")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get("boogaloh")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get("Identifier")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get("+")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get("-")] = "Epsilon";
 		
 		//Factor
-		Table[24][10] = ") Term (";
-		Table[24][38] = "id";
-		Table[24][39] = "lit";
-		Table[24][40] = "legit";
-		Table[24][41] = "tigel";
-		Table[24][8] = "Epsilon";
-		Table[24][14] = "Epsilon";
-		Table[24][15] = "Epsilon";
-		Table[24][16] = "Epsilon";
-		Table[24][17] = "Epsilon";
-		Table[24][23] = "Epsilon";
-		Table[24][24] = "Epsilon";
-		Table[24][26] = "Epsilon";
-		Table[24][27] = "Epsilon";
-		Table[24][28] = "Epsilon";
-		Table[24][29] = "Epsilon";
+		Table[Row.get("Factor")][Col.get("(")] = ") Expr (";
+		Table[Row.get("Factor")][Col.get("Identifier")] = "Identifier";
+		Table[Row.get("Factor")][Col.get("Literal")] = "Literal";
+		Table[Row.get("Factor")][Col.get("legit")] = "legit";
+		Table[Row.get("Factor")][Col.get("tigel")] = "tigel";
+		
+		
 	}
 
 	//recognizer
@@ -334,6 +323,8 @@ public class ParseTable
 				stack.pop();
 //				System.out.println(stack.peek());
 			}
+//			System.out.println("TOS: " + stack.peek());
+//			System.out.println("Token: " + tokens.get(i).token);
 			if(Col.containsKey(stack.peek()))//top is terminal
 			{
 				if(stack.peek().equals(tokens.get(i).name))
@@ -374,9 +365,9 @@ public class ParseTable
 						
 						
 					}
-					if(popped.equals("id") || popped.equals("lit"))
+					if(popped.equals("Identifier") || popped.equals("Literal"))
 					{
-						if(popped.equals("id")) 
+						if(popped.equals("Identifier")) 
 							SemanticAction.checkdec(declaration, tokens.get(i));
 
 						if(	tokens.get(i+1).name.equals("=") 	|| 
@@ -395,7 +386,7 @@ public class ParseTable
 							tokens.get(i+1).name.equals("&&"))
 						{
 							IdEntry curr; 
-							if(tokens.get(i).name.equals("id"))
+							if(tokens.get(i).name.equals("Identifier"))
 								curr = SymbolTable.idLookup(tokens.get(i).token,0);
 							else {
 								curr = new IdEntry(tokens.get(i).name, getDataType(tokens.get(i)), tokens.get(i).token);
@@ -404,9 +395,9 @@ public class ParseTable
 							String look1 = tokens.get(i+1).name;
 							IdEntry look2;
 							IdEntry temp1 = tokens.get(i+2);
-							if(temp1.name.equals("id"))
+							if(temp1.name.equals("Identifier"))
 								look2 = SymbolTable.idLookup(temp1.token, 0);
-							else if(temp1.name.equals("lit")){
+							else if(temp1.name.equals("Literal")){
 								look2 = new IdEntry(temp1.name, getDataType(temp1), temp1.token);
 								look2.linenum = temp1.linenum;
 							}
