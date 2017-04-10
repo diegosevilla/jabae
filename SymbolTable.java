@@ -16,31 +16,20 @@ public class SymbolTable
 
 		idTable.add(new Hashtable<String,IdEntry>());
 
-		lexemes.add("+");
-		lexemes.add("-");
-		lexemes.add("*");
-		lexemes.add("/");
-		lexemes.add("%");
 		lexemes.add("YO!");
-		lexemes.add("PEACE'OUT!");
+		lexemes.add("PEACEOUT!");
 		lexemes.add("Check'dis");
 		lexemes.add("noh");
-		lexemes.add("(");
-		lexemes.add(")");
-		lexemes.add("{");
-		lexemes.add("}");
 		lexemes.add("Pop'till");
 		lexemes.add("NonStop'till");
 		lexemes.add("Do'dis");
-		lexemes.add("Yo'Wait");
+		lexemes.add("Yo'wait");
 		lexemes.add("How'Bowt");
 		lexemes.add("Aight");
-		lexemes.add(":");
 		lexemes.add("peace");
 		lexemes.add("shoot");
 		lexemes.add("Gimme");
 		lexemes.add("Sho'me");
-		lexemes.add("=");
 		lexemes.add("digits");
 		lexemes.add("ride");
 		lexemes.add("moolah");
@@ -53,8 +42,19 @@ public class SymbolTable
 		lexemes.add("<=");
 		lexemes.add("<");
 		lexemes.add(">");
-		lexemes.add("id");
-		lexemes.add("lit");
+		lexemes.add("+");
+		lexemes.add("-");
+		lexemes.add("*");
+		lexemes.add("/");
+		lexemes.add("%");
+		lexemes.add("=");
+		lexemes.add(":");
+		lexemes.add("{");
+		lexemes.add("}");
+		lexemes.add("(");
+		lexemes.add(")");
+		lexemes.add("Identifier");
+		lexemes.add("Literal");
 		lexemes.add("legit");
 		lexemes.add("tigel");
 		patterns.put("[\\\"].+[\\\"]", "39, String Literal");
@@ -138,7 +138,7 @@ public class SymbolTable
 			while(patternIte.hasNext()) {
 				String currPattern = patternIte.next();
 				if(checkMatch(token, currPattern)){
-					String name = patterns.get(currPattern).split(", ")[1].equals("Variable")? "id" : "lit";
+					String name = patterns.get(currPattern).split(", ")[1].equals("Variable")? "Identifier" : "Literal";
 					IdEntry newEntry = new IdEntry(name, linenum, token);
 //					System.out.println("Token tag: " + details[0] + " Lexeme: " + token + " Token type: " + details[1] + " Line_num:" + linenum);
 					return newEntry;
