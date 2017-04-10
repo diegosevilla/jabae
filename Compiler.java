@@ -17,6 +17,7 @@ public class Compiler {
 				ArrayList<IdEntry> tokens = scanner.scan(args[0]);
 				if(parser.Valid(tokens) && Error.errors.size() == 0) {
 					System.out.println("Recognized!");
+					parser.ast.printString("", false);
 					//ParseTree.toString(ParseTree.getRoot(parser.pt),"",false);
 				} else
 					Error.printErrors();

@@ -448,8 +448,14 @@ public class ParseTable
 					if(temp.equals("Else-block")) {
 						//If-block body is finished
 						if(prodrule[0].equals("Epsilon")) {
-							//No else is added
+							//No else is added, popping Body
 							String popd = opStack.pop();
+							System.out.println("Popping " + popd + " TOS: " + opStack.peek());
+							nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
+							nodes.remove(popd);
+							
+							//Adding if-block to program
+							popd = opStack.pop();
 							System.out.println("Popping " + popd + " TOS: " + opStack.peek());
 							nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
 							nodes.remove(popd);
@@ -499,6 +505,13 @@ public class ParseTable
 							System.out.println("Popping " + popd + " TOS: " + opStack.peek());
 							nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
 							nodes.remove(popd);
+							
+							//add new body node for branch
+							popd = opStack.peek();
+							System.out.println("Pushing Body & creating node with token " + popd);
+							opStack.push("Body");
+							nodes.put(opStack.peek(), new ASTNode("body", popd));
+							
 						} else { //TEST
 							//Lookahead as there is new condition
 							popd = opStack.pop();
@@ -541,42 +554,101 @@ public class ParseTable
 								nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
 								nodes.remove(popd);
 							} else if(opStack.peek().equals("ExprOp")) {
-//								//the operation is finished
-//								System.out.println("Popping " + popd + " TOS: " + opStack.peek());
-//								nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
-//								nodes.remove(popd);
-//								
-//								//Pushing the leaf to where it should be
-//								popd = opStack.pop();
-//								System.out.println("Popping " + popd + " TOS: " + opStack.peek());
-//								nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
-//								nodes.remove(popd);
-//								
-//								//Pushing
+								//the operation is finished
+								System.out.println("Popping " + popd + " TOS: " + opStack.peek());
+								nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
+								nodes.remove(popd);
+								
+								//Pushing the leaf to where it should be
+								popd = opStack.pop();
+								System.out.println("Popping " + popd + " TOS: " + opStack.peek());
+								nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
+								nodes.remove(popd);
+								
+								//Pushing everything to where it should be
+								popd = opStack.pop();
+								System.out.println("Popping " + popd + " TOS: " + opStack.peek());
+								nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
+								nodes.remove(popd);		
 							} else opStack.push(popd);
-						} else {
-//							//+ or - operation found
-//							//LHS is finished, need to create a new operation node
-//							String popd = opStack.pop();
-//							//Push Condition to op stack
-//							if(opStack.peek().contains("ExprOp")) {
-//								if(opStack.peek().contains(prodrule[2])) {
-//									
-//								}
-//							} else {
-//								System.out.println("Pushing ExprOp" + prodrule[2] + " & creating node with token " + prodrule[2] 
-//										+ " and with initial LHS " + popd);
-//								opStack.push("ExprOp"+ prodrule[2]);
-//								nodes.put(("ExprOp"+ prodrule[2]), new ASTNode(("exprop"+ prodrule[2]), prodrule[2]));
-//								nodes.get(opStack.peek()).token = prodrule[2];
-//								nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
-//								nodes.remove(popd);
-//							}
-//							System.out.println("OPERATOR " + nodes.get(opStack.peek()).token);
+						} else { //+ or - operation found
+							//LHS is finished, need to create a new operation node
+							String popd = opStack.pop();
+							//Push Condition to op stack
+							if(opStack.peek().equals("ExprOp")) {
+								//If it already has an initial operation before
+								System.out.println("Pushing rhs to " + opStack.peek());
+								nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
+								nodes.remove(popd);
+								
+								System.out.println("Creating node with token " + prodrule[2] + " and with initial LHS " 
+										+ opStack.peek() + " and pushing ExprOp");
+								ASTNode tmpNode = nodes.get(opStack.peek());
+								nodes.remove(opStack.pop());
+								opStack.push("ExprOp");
+								nodes.put("ExprOp", new ASTNode("exprop", prodrule[2]));
+								nodes.get(opStack.peek()).bodyChildren.add(tmpNode);
+							} else {
+								System.out.println("Pushing ExprOp & creating node with token " + prodrule[2] 
+										+ " and with initial LHS " + popd);
+								opStack.push("ExprOp");
+								nodes.put("ExprOp", new ASTNode("exprop", prodrule[2]));
+								nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
+								nodes.remove(popd);
+							}
+							System.out.println("OPERATOR " + nodes.get(opStack.peek()).token);
 						}
 					}
 					if(temp.equals("Term'")) {
-						
+						if(prodrule[0].equals("Epsilon")) {
+							//no other * or / or % operations added
+							String popd = opStack.pop(); //for now this will do LOL
+							System.out.println(opStack.peek());
+							if(opStack.peek().equals("TermOp")) {
+								//the operation is finished
+								System.out.println("Popping " + popd + " TOS: " + opStack.peek());
+								nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
+								nodes.remove(popd);
+								
+								//Pushing the leaf to where it should be
+								popd = opStack.pop();
+								System.out.println("Popping " + popd + " TOS: " + opStack.peek());
+								nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
+								nodes.remove(popd);
+								
+								//Pushing everything to where it should be
+								popd = opStack.pop();
+								System.out.println("Popping " + popd + " TOS: " + opStack.peek());
+								nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
+								nodes.remove(popd);		
+							} else opStack.push(popd);
+						}  else { //* or / or % operation found
+							//LHS is finished, need to create a new operation node
+							String popd = opStack.pop();
+							//Push Condition to op stack
+							if(opStack.peek().equals("TermOp")) {
+								//If it already has an initial operation before
+								System.out.println("Pushing rhs to " + opStack.peek());
+								nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
+								nodes.remove(popd);
+								
+								System.out.println("Creating node with token " + prodrule[2] + " and with initial LHS " 
+										+ opStack.peek() + " and pushing TermOp");
+								ASTNode tmpNode = nodes.get(opStack.peek());
+								nodes.remove(opStack.pop());
+								opStack.push("TermOp");
+								nodes.put("TermOp", new ASTNode("termop", prodrule[2]));
+								nodes.get(opStack.peek()).bodyChildren.add(tmpNode);
+							} else {
+								System.out.println("Pushing TermOp & creating node with token " + prodrule[2] 
+										+ " and with initial LHS " + popd);
+								opStack.push("TermOp");
+								nodes.put("TermOp", new ASTNode("termop", prodrule[2]));
+								nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
+								nodes.remove(popd);
+							}
+							System.out.println("OPERATOR " + nodes.get(opStack.peek()).token);
+						}
 					}
 					if(temp.equals("Factor")) {
 						if(!prodrule[0].equals("(")) {
