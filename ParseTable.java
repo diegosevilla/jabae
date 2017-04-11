@@ -338,7 +338,7 @@ public class ParseTable
 						opStack.push("program");
 						nodes.put(opStack.peek(), new ASTNode(opStack.peek(), opStack.peek()));
 					}
-					if(popped.equals("PEACE'OUT!")) {
+					if(popped.equals("PEACEOUT!")) {
 						//Pops the top node and uses it as the AST
 						System.out.println("Operator: " + opStack.peek());
 						if(Error.errors.size() == 0) {
