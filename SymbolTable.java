@@ -10,6 +10,7 @@ public class SymbolTable
 	Hashtable<String, String> patterns = new Hashtable<String, String>();
 	static ArrayList<Hashtable <String, IdEntry>> idTable = new ArrayList<Hashtable<String, IdEntry>>();
 	static int blockLevel = 1;
+	static int offset = 0;
 
 	public SymbolTable()
 	{
@@ -121,9 +122,18 @@ public class SymbolTable
 			return null;
 		}
 		IdEntry newEntry = new IdEntry(name, dataType, blkLevel);
+		int size;
+		switch(dataType){
+			case "digits": size = 4; break;
+			case "moolah": size = 8; break;
+			case "ride": size = 4; break;
+			default: size = 0;
+		}
+		newEntry.offset = offset;
+		offset += size;
 		table = idTable.get(blkLevel);
 		table.put(name, newEntry);
-//		System.out.println("Created " + name + " at blockLevel " + blkLevel);
+		System.out.println("Created " + name + " of type " + dataType + " offset is now " + offset);
 		return newEntry;
 	}
 

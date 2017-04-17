@@ -191,7 +191,8 @@ public class ParseTable
 		Table[Row.get("Assignment'")][Col.get("ride")] = "Epsilon";
 		Table[Row.get("Assignment'")][Col.get("moolah")] = "Epsilon";
 		Table[Row.get("Assignment'")][Col.get("boogaloh")] = "Epsilon";
-		Table[Row.get("Assignment'")][Col.get("Identifier")] = "Epsilon";	
+		Table[Row.get("Assignment'")][Col.get("Identifier")] = "Epsilon";
+		Table[Row.get("Assignment'")][Col.get("PEACEOUT!")] = "Epsilon";
 		
 		//Declaration
 		Table[Row.get("Declaration")][Col.get("digits")] = "Assignment' Identifier digits";
@@ -257,6 +258,7 @@ public class ParseTable
 		Table[Row.get("Expr'")][Col.get("moolah")] = "Epsilon";
 		Table[Row.get("Expr'")][Col.get("boogaloh")] = "Epsilon";
 		Table[Row.get("Expr'")][Col.get("Identifier")] = "Epsilon";
+		Table[Row.get("Expr'")][Col.get("PEACEOUT!")] = "Epsilon";
 		
 		//Term
 		Table[Row.get("Term")][Col.get("(")] = "Term' Factor";
@@ -292,6 +294,7 @@ public class ParseTable
 		Table[Row.get("Term'")][Col.get("Identifier")] = "Epsilon";
 		Table[Row.get("Term'")][Col.get("+")] = "Epsilon";
 		Table[Row.get("Term'")][Col.get("-")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get("PEACEOUT!")] = "Epsilon";
 		
 		//Factor
 		Table[Row.get("Factor")][Col.get("(")] = ") Expr (";
