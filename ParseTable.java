@@ -491,12 +491,16 @@ public class ParseTable
 							}
 							break;
 						case "Input":
-							//Push Assignment to op stack
 							System.out.println("Creating node with token " + tokens.get(i).name + 
-									" and adding child with value " + tokens.get(i+1).name);
+									" and adding child with value " + tokens.get(i+1).token);
 							ASTNode inputNode = new ASTNode("input", tokens.get(i).name);
 							inputNode.bodyChildren.add(new ASTNode(tokens.get(i+1).name, tokens.get(i+1).token));
 							nodes.get(opStack.peek()).bodyChildren.add(inputNode);	
+							break;
+						case "Output":
+							System.out.println("Pushing " + temp + " & creating node with token " + tokens.get(i).name);
+							opStack.push(temp);
+							nodes.put(temp, new ASTNode("output", tokens.get(i).name));
 							break;
 						case "Assignment":
 							//Push Assignment to op stack
@@ -592,7 +596,30 @@ public class ParseTable
 									nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
 									nodes.remove(popd);
 								} 
-								
+								else if(opStack.peek() != null && opStack.peek().equals("Assignment")) {
+									//assignment is finished
+									System.out.println("Popping " + popd + " TOS: " + opStack.peek());
+									nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
+									nodes.remove(popd);
+									
+									//Pushing assignment to where it should be
+									popd = opStack.pop();
+									System.out.println("Popping " + popd + " TOS: " + opStack.peek());
+									nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
+									nodes.remove(popd);
+								}
+								else if(opStack.peek() != null && opStack.peek().equals("Output")) {
+									//output is finished
+									System.out.println("Popping " + popd + " TOS: " + opStack.peek());
+									nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
+									nodes.remove(popd);
+									
+									//Pushing output to where it should be
+									popd = opStack.pop();
+									System.out.println("Popping " + popd + " TOS: " + opStack.peek());
+									nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
+									nodes.remove(popd);
+								}
 								else if(opStack.peek() != null && opStack.peek().equals("ExprOp")) {
 									//the operation is finished
 									System.out.println("Popping " + popd + " TOS: " + opStack.peek());
@@ -611,6 +638,8 @@ public class ParseTable
 									nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
 									nodes.remove(popd);		
 								} else opStack.push(popd);
+								
+								
 							} else { //+ or - operation found
 								//LHS is finished, need to create a new operation node
 								popd = opStack.pop();
