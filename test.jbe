@@ -1,15 +1,5 @@
 //this is a sample code n jabae
 YO!
-//digits y[1] = 2
-//y[0] = 3
-//ride e = 'e'
-//digits b = 2
-moolah a = 2.4
-moolah b = 2.4
-moolah c = 2.4
-moolah x = 2.4
-//Gimme b
-//x = a + b * c / x
-Gimme b
-Sho'me b
+digits y = 2
+y = 3 + 3 - y
 PEACEOUT!
