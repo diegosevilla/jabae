@@ -11,7 +11,7 @@ public class ParseTable
 	Hashtable<String, Integer> Row = new Hashtable<String, Integer>();
 	Hashtable<String, Integer> Col = new Hashtable<String, Integer>();
 	ASTNode ast;
-	String[][] Table = new String[25][43];
+	String[][] Table = new String[26][45];
 	String[][] pattern = new String[][]{
 								{"[\\\'].[\\\']", "ride"}, 
 								{"[-+]?[0-9]+\\.[0-9]+", "moolah"}, 
@@ -37,15 +37,16 @@ public class ParseTable
 		Row.put("Assignment", 13);
 		Row.put("Assignment'", 14);
 		Row.put("Declaration", 15);
-		Row.put("Condition", 16);
-		Row.put("Condition'", 17);
-		Row.put("Condition''", 18);
-		Row.put("Sym", 19);
-		Row.put("Expr", 20);
-		Row.put("Expr'", 21);
-		Row.put("Term", 22);
-		Row.put("Term'", 23);
-		Row.put("Factor", 24);
+		Row.put("Array", 16);
+		Row.put("Condition", 17);
+		Row.put("Condition'", 18);
+		Row.put("Condition''", 19);
+		Row.put("Sym", 20);
+		Row.put("Expr", 21);
+		Row.put("Expr'", 22);
+		Row.put("Term", 23);
+		Row.put("Term'", 24);
+		Row.put("Factor", 25);
 
 		//column names
 		Col.put("YO!", 1);
@@ -85,11 +86,13 @@ public class ParseTable
 		Col.put("}", 35);
 		Col.put("(", 36);
 		Col.put(")", 37);
-		Col.put("Identifier", 38);
-		Col.put("Literal", 39);
-		Col.put("legit", 40);
-		Col.put("tigel", 41);
-		Col.put("$", 42);
+		Col.put("[", 38);
+		Col.put("]", 39);
+		Col.put("Identifier", 40);
+		Col.put("Literal", 41);
+		Col.put("legit", 42);
+		Col.put("tigel", 43);
+		Col.put("$", 44);
 
 		//parse table
 		//all cells nulled are error cells
@@ -195,10 +198,27 @@ public class ParseTable
 		Table[Row.get("Assignment'")][Col.get("PEACEOUT!")] = "Epsilon";
 		
 		//Declaration
-		Table[Row.get("Declaration")][Col.get("digits")] = "Assignment' Identifier digits";
-		Table[Row.get("Declaration")][Col.get("ride")] = "Assignment' Identifier ride";
-		Table[Row.get("Declaration")][Col.get("moolah")] = "Assignment' Identifier moolah";
-		Table[Row.get("Declaration")][Col.get("boogaloh")] = "Assignment' Identifier boogaloh";
+		Table[Row.get("Declaration")][Col.get("digits")] = "Assignment' Array Identifier digits";
+		Table[Row.get("Declaration")][Col.get("ride")] = "Assignment' Array Identifier ride";
+		Table[Row.get("Declaration")][Col.get("moolah")] = "Assignment' Array Identifier moolah";
+		Table[Row.get("Declaration")][Col.get("boogaloh")] = "Assignment' Array Identifier boogaloh";
+		
+		//Array
+		Table[Row.get("Array")][Col.get("[")] = "] Literal [";
+		Table[Row.get("Array")][Col.get("=")] = "Epsilon";
+		Table[Row.get("Array")][Col.get("Check'dis")] = "Epsilon";
+		Table[Row.get("Array")][Col.get("Pop'till")] = "Epsilon";
+		Table[Row.get("Array")][Col.get("NonStop'till")] = "Epsilon";
+		Table[Row.get("Array")][Col.get("Do'dis")] = "Epsilon";
+		Table[Row.get("Array")][Col.get("Yo'wait")] = "Epsilon";
+		Table[Row.get("Array")][Col.get("Gimme")] = "Epsilon";
+		Table[Row.get("Array")][Col.get("Sho'me")] = "Epsilon";
+		Table[Row.get("Array")][Col.get("digits")] = "Epsilon";
+		Table[Row.get("Array")][Col.get("ride")] = "Epsilon";
+		Table[Row.get("Array")][Col.get("moolah")] = "Epsilon";
+		Table[Row.get("Array")][Col.get("boogaloh")] = "Epsilon";
+		Table[Row.get("Array")][Col.get("Identifier")] = "Epsilon";
+		Table[Row.get("Array")][Col.get("PEACEOUT!")] = "Epsilon";
 		
 		//Condition
 		Table[Row.get("Condition")][Col.get("(")] = "Condition' Condition''";
