@@ -1,6 +1,5 @@
 //this is a sample code n jabae
 YO!
-ride e = 'e'
-digits b = 2
-moolah x = 2.4
+digits y[1] = 2
+y[0] = 3
 PEACEOUT!

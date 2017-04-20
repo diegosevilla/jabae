@@ -7,6 +7,7 @@ public class IdEntry {
 	String scope;
 	int offset;
 	int linenum;
+	int size;
 	
 	public IdEntry(String name, String dataType, int blockLevel) {
 		this.name = name;

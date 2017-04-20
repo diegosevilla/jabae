@@ -15,6 +15,7 @@ public class Compiler {
 				scanner.lexemes.initResWords();
 				ParseTable parser = new ParseTable();
 				ArrayList<IdEntry> tokens = scanner.scan(args[0]);
+				for(IdEntry a : tokens) System.out.println(a.name + " " + a.token);
 				if(parser.Valid(tokens) && Error.errors.size() == 0) {
 					System.out.println("Recognized!");
 					parser.ast.printString("", false);

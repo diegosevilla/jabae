@@ -54,6 +54,8 @@ public class SymbolTable
 		lexemes.add("}");
 		lexemes.add("(");
 		lexemes.add(")");
+		lexemes.add("[");
+		lexemes.add("]");
 		lexemes.add("Identifier");
 		lexemes.add("Literal");
 		lexemes.add("legit");
@@ -65,7 +67,7 @@ public class SymbolTable
 		//it registers as an integer literal
 		patterns.put("[-+]?[0-9]+\\.[0-9]+", "43, moolah");
 		patterns.put("[-+]?[0-9]+", "42, digits");
-		patterns.put("[a-zA-z][A-Za-z0-9]*", "41, Variable");
+		patterns.put("[a-zA-Z][A-Za-z0-9]*", "41, Variable");
 	}
 
 	public void initResWords()
@@ -113,7 +115,7 @@ public class SymbolTable
 		}
 	}
 	
-	public static IdEntry install(String name, int blkLevel, String dataType) //blkLevel optional
+	public static IdEntry install(String name, int blkLevel, String dataType, int size) //blkLevel optional
 	{
 		if(blkLevel <= 1)
 			blkLevel = blockLevel;
@@ -122,15 +124,16 @@ public class SymbolTable
 			return null;
 		}
 		IdEntry newEntry = new IdEntry(name, dataType, blkLevel);
-		int size;
+		int memsize;
 		switch(dataType){
-			case "digits": size = 4; break;
-			case "moolah": size = 8; break;
-			case "ride": size = 4; break;
-			default: size = 0;
+			case "digits": memsize = 4; break;
+			case "moolah": memsize = 8; break;
+			case "ride": memsize = 4; break;
+			default: memsize = 0;
 		}
 		newEntry.offset = offset;
-		offset += size;
+		newEntry.size = size;
+		offset += memsize*size;
 		table = idTable.get(blkLevel);
 		table.put(name, newEntry);
 		System.out.println("Created " + name + " of type " + dataType + " offset is now " + offset);

@@ -1,13 +1,13 @@
 public class SemanticAction
 {
-	public static void checkdec(String type, IdEntry token)
+	public static void checkdec(String type, IdEntry token, int size)
 	{
 		IdEntry entry = SymbolTable.idLookup(token.token, 0);
 		if(type != null)
 		{
 			if(entry == null)
 			{
-				entry = SymbolTable.install(token.token, 0, type);
+				entry = SymbolTable.install(token.token, 0, type, size);
 			}
 			else
 			{

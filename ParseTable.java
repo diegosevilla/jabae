@@ -179,7 +179,7 @@ public class ParseTable
 		Table[Row.get("Output")][Col.get("Sho'me")] = "Expr Sho'me";
 		
 		//Assignment
-		Table[Row.get("Assignment")][Col.get("Identifier")] = "Expr = Identifier";
+		Table[Row.get("Assignment")][Col.get("Identifier")] = "Expr = Array Identifier";
 			
 		//Assignment'
 		Table[Row.get("Assignment'")][Col.get("=")] = "Expr =";
@@ -204,7 +204,7 @@ public class ParseTable
 		Table[Row.get("Declaration")][Col.get("boogaloh")] = "Assignment' Array Identifier boogaloh";
 		
 		//Array
-		Table[Row.get("Array")][Col.get("[")] = "] Literal [";
+		Table[Row.get("Array")][Col.get("[")] = "] Expr [";
 		Table[Row.get("Array")][Col.get("=")] = "Epsilon";
 		Table[Row.get("Array")][Col.get("Check'dis")] = "Epsilon";
 		Table[Row.get("Array")][Col.get("Pop'till")] = "Epsilon";
@@ -266,6 +266,7 @@ public class ParseTable
 		Table[Row.get("Expr'")][Col.get("<=")] = "Epsilon";
 		Table[Row.get("Expr'")][Col.get("<")] = "Epsilon";
 		Table[Row.get("Expr'")][Col.get(">")] = "Epsilon";
+		Table[Row.get("Expr'")][Col.get("]")] = "Epsilon";
 		Table[Row.get("Expr'")][Col.get("Check'dis")] = "Epsilon";
 		Table[Row.get("Expr'")][Col.get("Pop'till")] = "Epsilon";
 		Table[Row.get("Expr'")][Col.get("NonStop'till")] = "Epsilon";
@@ -300,6 +301,7 @@ public class ParseTable
 		Table[Row.get("Term'")][Col.get("<=")] = "Epsilon";
 		Table[Row.get("Term'")][Col.get("<")] = "Epsilon";
 		Table[Row.get("Term'")][Col.get(">")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get("]")] = "Epsilon";
 		Table[Row.get("Term'")][Col.get("Check'dis")] = "Epsilon";
 		Table[Row.get("Term'")][Col.get("Pop'till")] = "Epsilon";
 		Table[Row.get("Term'")][Col.get("NonStop'till")] = "Epsilon";
@@ -391,7 +393,18 @@ public class ParseTable
 					if(popped.equals("Identifier") || popped.equals("Literal"))
 					{
 						if(popped.equals("Identifier")) 
-							SemanticAction.checkdec(declaration, tokens.get(i));
+						{
+							int size = 1;
+							if(tokens.get(i+1).name.equals("["))
+							{	size = Integer.parseInt(tokens.get(i+2).token);
+								if(size < 1)
+								{
+									Error.addError(tokens.get(i+2).linenum, tokens.get(i+2).token + " index out of bounds.");
+								}
+							}
+							SemanticAction.checkdec(declaration, tokens.get(i), size);
+
+						}
 
 						if(	tokens.get(i+1).name.equals("=") 	|| 
 							tokens.get(i+1).name.equals("<") 	|| 
