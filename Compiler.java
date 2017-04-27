@@ -20,8 +20,10 @@ public class Compiler {
 					System.out.println("Recognized!");
 					parser.ast.printString("", false);
 					//ParseTree.toString(ParseTree.getRoot(parser.pt),"",false);
+					TAC.generate(parser.ast);
 				} else
 					Error.printErrors();
+
 
 	}
 

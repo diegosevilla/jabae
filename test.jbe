@@ -19,4 +19,6 @@ x = a + b * c / x
 //} noh {
 //  a = a+b
 //}
+//digits y = 2
+//y = 3 + 3 - y
 PEACEOUT!
