@@ -9,7 +9,14 @@ moolah b = 2.4
 moolah c = 2.4
 moolah x = 2.4
 //Gimme b
-//x = a + b * c / x
-Gimme b
-Sho'me b
+x = a + b * c / x
+//Gimme b
+//Sho'me b
+//x = b + b
+//Check'dis(2 < 2) {
+  //ride c
+//  a = a+b
+//} noh {
+//  a = a+b
+//}
 PEACEOUT!
