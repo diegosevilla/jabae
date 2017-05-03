@@ -183,6 +183,7 @@ public class ParseTable
 			
 		//Assignment'
 		Table[Row.get("Assignment'")][Col.get("=")] = "Expr =";
+		Table[Row.get("Assignment'")][Col.get("}")] = "Epsilon";
 		Table[Row.get("Assignment'")][Col.get("Check'dis")] = "Epsilon";
 		Table[Row.get("Assignment'")][Col.get("Pop'till")] = "Epsilon";
 		Table[Row.get("Assignment'")][Col.get("NonStop'till")] = "Epsilon";
@@ -206,6 +207,7 @@ public class ParseTable
 		//Array
 		Table[Row.get("Array")][Col.get("[")] = "] Expr [";
 		Table[Row.get("Array")][Col.get("=")] = "Epsilon";
+		Table[Row.get("Array")][Col.get("}")] = "Epsilon";
 		Table[Row.get("Array")][Col.get("Check'dis")] = "Epsilon";
 		Table[Row.get("Array")][Col.get("Pop'till")] = "Epsilon";
 		Table[Row.get("Array")][Col.get("NonStop'till")] = "Epsilon";
@@ -267,6 +269,8 @@ public class ParseTable
 		Table[Row.get("Expr'")][Col.get("<")] = "Epsilon";
 		Table[Row.get("Expr'")][Col.get(">")] = "Epsilon";
 		Table[Row.get("Expr'")][Col.get("]")] = "Epsilon";
+		Table[Row.get("Expr'")][Col.get("&&")] = "Epsilon";
+		Table[Row.get("Expr'")][Col.get("||")] = "Epsilon";
 		Table[Row.get("Expr'")][Col.get("Check'dis")] = "Epsilon";
 		Table[Row.get("Expr'")][Col.get("Pop'till")] = "Epsilon";
 		Table[Row.get("Expr'")][Col.get("NonStop'till")] = "Epsilon";
@@ -302,6 +306,8 @@ public class ParseTable
 		Table[Row.get("Term'")][Col.get("<")] = "Epsilon";
 		Table[Row.get("Term'")][Col.get(">")] = "Epsilon";
 		Table[Row.get("Term'")][Col.get("]")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get("&&")] = "Epsilon";
+		Table[Row.get("Term'")][Col.get("||")] = "Epsilon";
 		Table[Row.get("Term'")][Col.get("Check'dis")] = "Epsilon";
 		Table[Row.get("Term'")][Col.get("Pop'till")] = "Epsilon";
 		Table[Row.get("Term'")][Col.get("NonStop'till")] = "Epsilon";
