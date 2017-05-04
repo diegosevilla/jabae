@@ -1,23 +1,11 @@
 //this is a sample code n jabae
 YO!
-//digits y[1] = 2
-//y[0] = 3
-//ride e = 'e'
-//digits b = 2
 moolah a = 2.4
 moolah b = 2.4
-//moolah c = 2.4
-//moolah x = 2.4
-//Gimme b
-//x = a + b * c - 3.0 / x - 3.0
-//Gimme b
-//Sho'me b
-Check'dis(2 >= 2) {
-  ride c
-  a = (a+b) + 3
-} noh {
-  ride e
+NonStop'till(b == 2.2 && a > 1.2){
+	Sho'me "the world"
 }
-//digits y = 2
-//y = 3 + 3 - y
+Do'dis{
+	Sho'me "haller"
+} NonStop'till(a == 2.4)
 PEACEOUT!

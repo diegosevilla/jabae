@@ -149,12 +149,12 @@ public class ParseTable
 		Table[Row.get("Else-block'")][Col.get("{")] = "} Statement {";
 		
 		//Loop-block
-		Table[Row.get("Loop-block")][Col.get("Pop'till")] = "";
-		Table[Row.get("Loop-block")][Col.get("NonStop'till")] = "";
-		Table[Row.get("Loop-block")][Col.get("Do'dis")] = "";
+		Table[Row.get("Loop-block")][Col.get("Pop'till")] = "} Control-block Statement { ) Condition ( Pop'till Expr";
+		Table[Row.get("Loop-block")][Col.get("NonStop'till")] = "} Control-block Statement { ) Condition ( NonStop'till";
+		Table[Row.get("Loop-block")][Col.get("Do'dis")] = ") Condition ( NonStop'till } Control-block Statement { Do'dis";
 		
 		//Switch-block
-		Table[Row.get("Switch-block")][Col.get("Yo'wait")] = "";
+		Table[Row.get("Switch-block")][Col.get("Yo'wait")] = "Epsilon";
 		
 		//Case-block
 		Table[Row.get("Case-block")][Col.get("How'Bowt")] = "Case-block' Control-block Statement : Expr How'Bowt";
@@ -356,7 +356,7 @@ public class ParseTable
         String[] prodrule;
 		int i, eCount = 0, tCount = 0;
 		String declaration = null;
-		Boolean parsingOperations = false, parsingConditions = false;
+		Boolean parsingOperations = false, parsingConditions = false, doWhile = false;
 
 		for(i = 0; !stack.peek().equals("$");)
 		{
@@ -364,8 +364,8 @@ public class ParseTable
 				stack.pop();
 //				System.out.println(stack.peek());
 			}
-//			System.out.println("TOS: " + stack.peek());
-//			System.out.println("Token: " + tokens.get(i).token);
+			System.out.println(stack.peek()+"4");
+			System.out.println("Token: " + tokens.get(i).token);
 			if(Col.containsKey(stack.peek()))//top is terminal
 			{
 				if(stack.peek().equals(tokens.get(i).name))
@@ -407,6 +407,21 @@ public class ParseTable
 								System.out.println("Popping " + popd + " TOS: " + opStack.peek());
 								nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
 								nodes.remove(popd);
+								break;
+							case "Loop-body":
+								popd = opStack.pop();
+								System.out.println("-----------------------------Popping " + popd + " TOS: " + opStack.peek());
+								nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
+								nodes.remove(popd);
+									
+								if(!tokens.get(i+1).name.equals("NonStop'till")){
+									//Adding if-block to program
+									popd = opStack.pop();
+									System.out.println("Popping " + popd + " TOS: " + opStack.peek());
+									nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
+									nodes.remove(popd);
+								} else 
+									doWhile = true;
 								break;
 						}
 						popd = "";
@@ -512,7 +527,9 @@ public class ParseTable
 					// if(cell.equals("Epsilon"))
 					// 	continue;
 					prodrule = cell.split(" ");
+					System.out.println(prodrule.length);
 					System.out.println("pop:" + stack.peek() + " token: " + tokens.get(i).name);
+
 					
 					//Parse Tree
 					temp = stack.pop();
@@ -542,6 +559,19 @@ public class ParseTable
 							System.out.println("Pushing Else-body & creating it's node");
 							opStack.push("Else-body");
 							nodes.put("Else-body", new ASTNode("body", "else-body"));
+							break;
+						case "Loop-block":
+							//Push Loop-block to op stack
+							System.out.println("Pushing " + temp + " & creating node with token " + tokens.get(i).name);
+							opStack.push(temp);
+							nodes.put(temp, new ASTNode("loop", tokens.get(i).name));
+							switch (tokens.get(i).name) {
+								case "Do'dis": 	String label = "Loop-body";
+												System.out.println("Pushing " + label + " & creating it's node");
+												opStack.push(label);
+												nodes.put(label, new ASTNode("body", label.toLowerCase()));
+												break;
+							}
 							break;
 						case "Input":
 							System.out.println("Creating node with token " + tokens.get(i).name + 
@@ -604,16 +634,33 @@ public class ParseTable
 								//Pushing declaration to where it should be
 								popd = opStack.pop();
 								System.out.println("Replacing temporary " + popd + " TOS: " + opStack.peek());
-								nodes.remove(popd);
-								nodes.get(opStack.peek()).bodyChildren.add(created);
+								
+								if(doWhile){
+									nodes.remove(popd);
+									nodes.get(opStack.peek()).bodyChildren.add(created);
+									popd = opStack.pop();
+									System.out.println("Popping " + popd + " TOS: " + opStack.peek());
+									nodes.get(opStack.peek()).bodyChildren.add(nodes.get(popd));
+									nodes.remove(popd);
+								} else {
+									nodes.remove(popd);
+									nodes.get(opStack.peek()).bodyChildren.add(created);
+									
+									String label = "";
+									switch(opStack.peek()){
+										case "If-block": label = "If-body"; break;
+										case "Loop-block": label = "Loop-body"; break;
+										default: label = "";
+									}
+									//Creating body for the if body
+									System.out.println("Pushing " + label + " & creating it's node");
+									opStack.push(label);
+									nodes.put(label, new ASTNode("body", label.toLowerCase()));
+								}
 								infix.clear();
 								parsingOperations = false;
 								parsingConditions = false;
-								
-								//Creating body for the if body
-								System.out.println("Pushing If-body & creating it's node");
-								opStack.push("If-body");
-								nodes.put("If-body", new ASTNode("body", "if-body"));
+									
 							}
 							break;
 						case "Expr'":
@@ -642,8 +689,8 @@ public class ParseTable
 					popd = "";
 					
 					for(int c = 0; c < prodrule.length; c++){
-						stack.push(prodrule[c]);
-						System.out.println("new: " + stack.peek());
+						System.out.println("new: " + prodrule[c]);
+						stack.push(prodrule[c].trim());	
 					}
 				}
 				else {
