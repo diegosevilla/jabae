@@ -2,12 +2,24 @@ import java.util.ArrayList;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.File;
 
 public class TAC
 {
 	static int tempcount = 0;
 	static int labelcount = 0;
-	static String code = "";
+	static int datacount = 0;
+	static String data = "section .data\n";
+	static String bss = "\nsection .bss\n";
+	static String text = "\nsection .text\n\tglobal _start\n";
+	static String code = "\n_start:\n";
+
+	public static String toString(String arg){
+		if(arg.startsWith("\"") && arg.endsWith("\""))
+			return arg;
+		else 
+			return "\""+ arg + "\"";
+	}
 
 	public static String createTemp()
 	{
@@ -20,13 +32,15 @@ public class TAC
 
 	public static void append(String newcode)
 	{
-		code = code + "\n\n" + newcode;
+		code = code + "\n" + newcode;
 	}
 
 	public static void print(String arg)
 	{
-		append("\tparam: " + arg);
-		append("\tcall Sho'me");
+		arg = toString(arg);
+		data += "\tdata"+datacount + " db " + arg + ",10\n";
+		append("\tmov rax, 1\n\tmov rdi, 1\n\tmov rsi, data" + datacount + "\n\tmov rdx, "+(arg.length()-1)+"\n\tsyscall\n");
+		datacount++;
 	}
 
 	public static void read(String arg)
@@ -70,11 +84,6 @@ public class TAC
 		
 		switch(node.type)
 		{
-			case "program":
-			{
-				append("\tStart asm code:");
-				break;
-			}
 			case "assignment": 
 			{	
 				assignment(node.bodyChildren.get(0).token, generate(node.bodyChildren.get(1)));
@@ -173,7 +182,19 @@ public class TAC
 	public static void genASM(ASTNode node, String filename)
 	{
 		generate(node);
+		append("\tmov rax, 60\n\tmov rdi, 0\n\tsyscall\n");
 		System.out.println(filename);
-		System.out.println(code);
+		System.out.println(data+bss+text+code);
+
+		try{
+			File file = new File(filename);
+
+			file.createNewFile();
+
+			FileWriter writer = new FileWriter(file);
+			writer.write(data+bss+text+code);
+			writer.flush();
+			writer.close();
+		} catch(Exception e){}
 	}
 }
