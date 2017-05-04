@@ -1,9 +1,13 @@
 import java.util.ArrayList;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class TAC
 {
 	static int tempcount = 0;
 	static int labelcount = 0;
+	static String code = "";
 
 	public static String createTemp()
 	{
@@ -14,68 +18,92 @@ public class TAC
 		return "L" + labelcount++;
 	}
 
+	public static void append(String newcode)
+	{
+		code = code + "\n\n" + newcode;
+	}
 
 	public static void print(String arg)
 	{
-		System.out.println("\tparam: " + arg);
-		System.out.println("\tcall Sho'me");
+		append("\tparam: " + arg);
+		append("\tcall Sho'me");
 	}
 
 	public static void read(String arg)
 	{
-		System.out.println("\tparam: " + arg);
-		System.out.println("\tcall Gimme");
+		append("\tparam: " + arg);
+		append("\tcall Gimme");
 	}
 
 	public static void assignment(String dest, String val)
 	{
-		System.out.println("\t"+dest + " = " + val);
+		append("\t"+dest + " = " + val);
 	}
 
 	public static String expr(String op, String op1, String op2)
 	{
 		String dest = createTemp();
-		System.out.println("\t"+dest + " = " + op1 + " " + op + " " + op2);
+		append("\t"+dest + " = " + op1 + " " + op + " " + op2);
 		return dest;
 	}
 	public static void dec(String type, String dest, String val)
 	{
 		if(val.equals(""))
-			System.out.println("\t"+type + " " + dest);
+			append("\t"+type + " " + dest);
 		else 
-			System.out.println("\t"+type + " " + dest + " = " + val);
+			append("\t"+type + " " + dest + " = " + val);
 	}
 	public static void ifElse(ASTNode cond, ASTNode body, String next)
 	{
 		String trueLabel = createLabel();
-		String ifElseCode = "\t"+ generate(cond) + " goto " + trueLabel + "\n\tgoto " + next + "\n" + trueLabel+ ": ";
-		System.out.println(ifElseCode);
+		String ifElseCode = "\tif "+ generate(cond) + " goto " + trueLabel + "\n\tgoto " + next + "\n" + trueLabel+ ": ";
+		append(ifElseCode);
 		generate(body);
-		System.out.println(next+ ": ");
+		append(next+ ": ");
 	}
 
 	public static String generate(ASTNode node)
 	{
-		//System.out.println(node.token + " : " + node.type);
+		System.out.println(node.token + " : " + node.type);
 		if(node.type.equals("Literal") || node.type.equals("Identifier"))
 			return node.token;
 		
 		switch(node.type)
 		{
-			case "assignment": 
+			case "program":
 			{
+				append("\tStart asm code:");
+				break;
+			}
+			case "assignment": 
+			{	
 				assignment(node.bodyChildren.get(0).token, generate(node.bodyChildren.get(1)));
 				return "";
 			}
-			case "exprop":
+			case "+":
 			{
 				String temp = expr(node.token , generate(node.bodyChildren.get(0)), generate(node.bodyChildren.get(1)));
 				return temp;
 			}
-			case "termop":
+			case "-":
 			{
 				String temp = expr(node.token , generate(node.bodyChildren.get(0)), generate(node.bodyChildren.get(1)));
-				return temp;	
+				return temp;
+			}
+			case "*":
+			{
+				String temp = expr(node.token , generate(node.bodyChildren.get(0)), generate(node.bodyChildren.get(1)));
+				return temp;
+			}
+			case "/":
+			{
+				String temp = expr(node.token , generate(node.bodyChildren.get(0)), generate(node.bodyChildren.get(1)));
+				return temp;
+			}
+			case "%":
+			{
+				String temp = expr(node.token , generate(node.bodyChildren.get(0)), generate(node.bodyChildren.get(1)));
+				return temp;
 			}
 			case "output":
 			{
@@ -101,9 +129,29 @@ public class TAC
 				ifElse(node.bodyChildren.get(0), node.bodyChildren.get(1), newLabel);
 				return "";
 			}
-			case "condition":
+			case "<":
 			{
-				return "If " + generate(node.bodyChildren.get(0)) + " " + node.token + " " +  generate(node.bodyChildren.get(1)); 
+				return " " + generate(node.bodyChildren.get(0)) + " " + node.token + " " +  generate(node.bodyChildren.get(1)); 
+			}
+			case ">":
+			{
+				return " " + generate(node.bodyChildren.get(0)) + " " + node.token + " " +  generate(node.bodyChildren.get(1)); 
+			}
+			case "<=":
+			{
+				return " " + generate(node.bodyChildren.get(0)) + " " + node.token + " " +  generate(node.bodyChildren.get(1)); 
+			}
+			case ">=":
+			{
+				return " " + generate(node.bodyChildren.get(0)) + " " + node.token + " " +  generate(node.bodyChildren.get(1)); 
+			}
+			case "==":
+			{
+				return " " + generate(node.bodyChildren.get(0)) + " " + node.token + " " +  generate(node.bodyChildren.get(1)); 
+			}
+			case "!=":
+			{
+				return " " + generate(node.bodyChildren.get(0)) + " " + node.token + " " +  generate(node.bodyChildren.get(1)); 
 			}
 			case "body":
 			{
@@ -122,4 +170,10 @@ public class TAC
 		return "";
 	}
 
+	public static void genASM(ASTNode node, String filename)
+	{
+		generate(node);
+		System.out.println(filename);
+		System.out.println(code);
+	}
 }

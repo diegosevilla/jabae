@@ -11,20 +11,19 @@ public class Compiler {
             System.out.println("Invalid file type");
             return;
         }
-				Scanner scanner = new Scanner();
-				scanner.lexemes.initResWords();
-				ParseTable parser = new ParseTable();
-				ArrayList<IdEntry> tokens = scanner.scan(args[0]);
-				for(IdEntry a : tokens) System.out.println(a.name + " " + a.token);
-				if(parser.Valid(tokens) && Error.errors.size() == 0) {
-					System.out.println("Recognized!");
-					parser.ast.printString("", false);
-					//ParseTree.toString(ParseTree.getRoot(parser.pt),"",false);
-//					TAC.generate(parser.ast);
-				} else
-					Error.printErrors();
-
-
+		
+		Scanner scanner = new Scanner();
+		scanner.lexemes.initResWords();
+		ParseTable parser = new ParseTable();
+		ArrayList<IdEntry> tokens = scanner.scan(args[0]);
+		for(IdEntry a : tokens) System.out.println(a.name + " " + a.token);
+		if(parser.Valid(tokens) && Error.errors.size() == 0) {
+			System.out.println("Recognized!");
+			parser.ast.printString("", false);
+			//ParseTree.toString(ParseTree.getRoot(parser.pt),"",false);
+			TAC.genASM(parser.ast, args[0].split("\\.")[0] + ".txt");
+		} else
+			Error.printErrors();
 	}
 
 }
