@@ -20,7 +20,7 @@ public class TAC
 
 	public static void append(String newcode)
 	{
-		code = code + "\n\n" + newcode;
+		code = code + "\n" + newcode;
 	}
 
 	public static void print(String arg)
@@ -46,6 +46,7 @@ public class TAC
 		append("\t"+dest + " = " + op1 + " " + op + " " + op2);
 		return dest;
 	}
+
 	public static void dec(String type, String dest, String val)
 	{
 		if(val.equals(""))
@@ -53,16 +54,58 @@ public class TAC
 		else 
 			append("\t"+type + " " + dest + " = " + val);
 	}
-	public static void ifElse(ASTNode cond, ASTNode body, String next)
+
+	public static String compare(String op1, String op, String op2)
 	{
-		String trueLabel = createLabel();
-		String ifElseCode = "\tif "+ generate(cond) + " goto " + trueLabel + "\n\tgoto " + next + "\n" + trueLabel+ ": ";
-		append(ifElseCode);
-		generate(body);
-		append(next+ ": ");
+		return (op1 + " " + op + " " + op2);
 	}
 
-	public static String generate(ASTNode node)
+	public static void ifElse(ASTNode cond, ASTNode ifbody, ASTNode elsebody, String next)
+	{
+		String trueLabel;
+		String falselabel;
+		String ifelsecode;
+
+		if(elsebody == null)
+		{
+			trueLabel = createLabel();
+			falselabel = next;
+			ifelsecode = "\t" + generate(cond, trueLabel, falselabel) + "\n" + trueLabel + "\n" + generate(ifbody, "", "");
+		}
+		else
+		{
+			trueLabel = createLabel();
+			falselabel = createLabel();
+			ifelsecode = "\t" + generate(cond, trueLabel, falselabel) + "\n" + trueLabel + "\n" + generate(ifbody, "", "") + "\n\tgoto " + next + "\n" + falselabel + "\n" + generate(elsebody, "", "");
+		}
+
+		append(ifelsecode);
+	}
+
+	public static void and(String left, String right, String truelabel, String falselabel)
+	{
+		String ltrue = createLabel();
+		String lfalse = falselabel;
+		String rtrue = truelabel;
+		String rfalse = falselabel;
+		String andcode = "\t" + left + "\n" + ltrue + "\n\t" + right;
+	}
+
+	public static void or(String left, String right, String truelabel, String falselabel)
+	{
+		String ltrue = truelabel;
+		String lfalse = createLabel();
+		String rtrue = truelabel;
+		String rfalse = falselabel;
+		String andcode = "\t" + left + "\n" + lfalse + "\n\t" + right;
+	}
+	
+	public static void whileloop()
+	{
+
+	}
+
+	public static String generate(ASTNode node, String arg1, String arg2)
 	{
 		System.out.println(node.token + " : " + node.type);
 		if(node.type.equals("Literal") || node.type.equals("Identifier"))
@@ -77,102 +120,92 @@ public class TAC
 			}
 			case "assignment": 
 			{	
-				assignment(node.bodyChildren.get(0).token, generate(node.bodyChildren.get(1)));
+				assignment(node.bodyChildren.get(0).token, generate(node.bodyChildren.get(1), "", ""));
 				return "";
 			}
 			case "+":
-			{
-				String temp = expr(node.token , generate(node.bodyChildren.get(0)), generate(node.bodyChildren.get(1)));
-				return temp;
-			}
 			case "-":
-			{
-				String temp = expr(node.token , generate(node.bodyChildren.get(0)), generate(node.bodyChildren.get(1)));
-				return temp;
-			}
 			case "*":
-			{
-				String temp = expr(node.token , generate(node.bodyChildren.get(0)), generate(node.bodyChildren.get(1)));
-				return temp;
-			}
 			case "/":
-			{
-				String temp = expr(node.token , generate(node.bodyChildren.get(0)), generate(node.bodyChildren.get(1)));
-				return temp;
-			}
 			case "%":
 			{
-				String temp = expr(node.token , generate(node.bodyChildren.get(0)), generate(node.bodyChildren.get(1)));
+				String temp = expr(node.token , generate(node.bodyChildren.get(0), "", ""), generate(node.bodyChildren.get(1), "", ""));
 				return temp;
 			}
 			case "output":
 			{
-				print(generate(node.bodyChildren.get(0)));
+				print(generate(node.bodyChildren.get(0), "", ""));
 				return "";
 			}
 			case "input":
 			{
-				read(generate(node.bodyChildren.get(0)));
+				read(generate(node.bodyChildren.get(0), "", ""));
 				return "";
 			}
 			case "declaration":
 			{	
 				if(node.bodyChildren.size() < 2)
-					dec(node.token, generate(node.bodyChildren.get(0)), "");
+					dec(node.token, generate(node.bodyChildren.get(0), "", ""), "");
 				else
-					dec(node.token, generate(node.bodyChildren.get(0)), generate(node.bodyChildren.get(1)));
+					dec(node.token, generate(node.bodyChildren.get(0), "", ""), generate(node.bodyChildren.get(1), "", ""));
 				return "";
 			}
 			case "branch":
 			{
 				String newLabel = createLabel();
-				ifElse(node.bodyChildren.get(0), node.bodyChildren.get(1), newLabel);
+				if(node.bodyChildren.size() < 3)
+					ifElse(node.bodyChildren.get(0), node.bodyChildren.get(1), null, newLabel);
+				else
+					ifElse(node.bodyChildren.get(0), node.bodyChildren.get(1), node.bodyChildren.get(2), newLabel);
+				return "";
+			}
+			case "&&":
+			{
+				and(generate(node.bodyChildren.get(0), "", ""), generate(node.bodyChildren.get(1), "", ""), arg1, arg2);
+				return "";
+			}
+			case "||":
+			{
+				or(generate(node.bodyChildren.get(0), "", ""), generate(node.bodyChildren.get(1), "", ""), arg1, arg2);
 				return "";
 			}
 			case "<":
-			{
-				return " " + generate(node.bodyChildren.get(0)) + " " + node.token + " " +  generate(node.bodyChildren.get(1)); 
-			}
 			case ">":
-			{
-				return " " + generate(node.bodyChildren.get(0)) + " " + node.token + " " +  generate(node.bodyChildren.get(1)); 
-			}
 			case "<=":
-			{
-				return " " + generate(node.bodyChildren.get(0)) + " " + node.token + " " +  generate(node.bodyChildren.get(1)); 
-			}
 			case ">=":
-			{
-				return " " + generate(node.bodyChildren.get(0)) + " " + node.token + " " +  generate(node.bodyChildren.get(1)); 
-			}
 			case "==":
-			{
-				return " " + generate(node.bodyChildren.get(0)) + " " + node.token + " " +  generate(node.bodyChildren.get(1)); 
-			}
 			case "!=":
 			{
-				return " " + generate(node.bodyChildren.get(0)) + " " + node.token + " " +  generate(node.bodyChildren.get(1)); 
+				compare(generate(node.bodyChildren.get(0), "", ""), node.token, generate(node.bodyChildren.get(1), "", ""));
+				return ""; 
 			}
 			case "body":
 			{
 				for(ASTNode child : node.bodyChildren)
 				{
-					generate(child);
+					generate(child, "", "");
 				}
 				return "";
+			}
+			case "loop":
+			{
+				if(node.token.equals("NonStop'till"))
+					whileloop();
+				return "";
+
 			}
 		}
 
 		for(ASTNode child : node.bodyChildren)
 		{
-			generate(child);
+			generate(child, "", "");
 		}
 		return "";
 	}
 
 	public static void genASM(ASTNode node, String filename)
 	{
-		generate(node);
+		generate(node, "", "");
 		System.out.println(filename);
 		System.out.println(code);
 	}
