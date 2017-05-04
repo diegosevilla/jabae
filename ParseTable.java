@@ -779,7 +779,7 @@ public class ParseTable
 			}
 			System.out.println("Postfix");
 			for(IdEntry pst:postfix) {
-				System.out.print(pst.token);
+				System.out.print(pst.token + " ");
 			}
 			System.out.println("");
 			
@@ -793,7 +793,7 @@ public class ParseTable
 					tmpNode.bodyChildren.add(postf.pop());
 					tmpNode.bodyChildren.add(postf.pop());
 					
-					if(!postf.isEmpty()) {
+					if(!postf.isEmpty() || !postfix.isEmpty()) {
 						postf.push(tmpNode);
 					} else return tmpNode;
 				} else {
@@ -801,7 +801,7 @@ public class ParseTable
 					IdEntry tmpOp = postfix.remove(0);
 					postf.push(new ASTNode(tmpOp.name, tmpOp.token));
 				}
-			} while(!postf.isEmpty());
+			} while(!postf.isEmpty() || !postfix.isEmpty());
 		}
 		return null;
 	}

@@ -2,7 +2,7 @@
 YO!
 moolah a = 2.4
 moolah b = 2.4
-NonStop'till(b == 2.2 && a > 1.2){
+NonStop'till(b == 2.2 || a > 1.2){
 	Sho'me "the world"
 }
 Do'dis{
