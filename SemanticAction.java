@@ -34,11 +34,11 @@ public class SemanticAction
 			if(opL.dataType.equals(opR.dataType))
 				return op;
 			else
-				Error.addError(opL.linenum, "Invalid operation " + op);
+				Error.addError(opL.linenum, "Invalid operation " + op + ". \"" + opL.name + "\" is of data type " + opL.dataType + " while \"" + opR.name + "\" is of data type " + opR.dataType + ".");
 		}
 		else
 		{
-			Error.addError(opL.linenum, "Invalid operation " + op);
+			Error.addError(opL.linenum, "Invalid operation " + op + ". \"" + opL.name + "\" is of data type " + opL.dataType + " cannot be operated with NULL");
 		}
 		return null;
 	}
