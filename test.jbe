@@ -1,11 +1,3 @@
-//this is a sample code n jabae
 YO!
-moolah a = 2.4
-moolah b = 2.4
-NonStop'till(b == 2.2 || a > 1.2){
-	Sho'me "the world"
-}
-Do'dis{
-	Sho'me "haller"
-} NonStop'till(a == 2.4)
+Sho'me "asdasd"
 PEACEOUT!
