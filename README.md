@@ -7,6 +7,6 @@ Concept :
   Program must start with “YO!” and ends with “PEACE OUT!”. Each command delimited by a new line.
   
 To Run:
-    java Scanner <source_file>.jbe  
+    java Compiler <source_file>.jbe  
   
   

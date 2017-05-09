@@ -34,6 +34,11 @@ public class TAC
 	{
 		code = code + "\n" + newcode;
 	}
+	public static void declare(String newVar)
+	{
+		bss += "\n";
+	}
+	
 
 	public static void print(String arg)
 	{
