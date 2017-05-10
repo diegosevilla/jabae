@@ -7,7 +7,7 @@ import java.io.File;
 public class TAC
 {
 	static int tempcount = 0;
-	static int labelcount = 0;
+	static int labelcount = 1;
 	static int datacount = 0;
 	static String data = "section .data\n";
 	static String bss = "\nsection .bss\n";
@@ -48,17 +48,20 @@ public class TAC
 		datacount++;
 	}
 
+	//TODO edit to assembly
 	public static void read(String arg)
 	{
 		append("\tparam: " + arg);
 		append("\tcall Gimme");
 	}
 
-	public static void assignment(String dest, String val)
+	//TODO edit to assembly
+	public static String assignment(String dest, String val)
 	{
-		append("\t"+dest + " = " + val);
+		return "\t"+dest + " = " + val;
 	}
 
+	//TODO edit to assembly
 	public static String expr(String op, String op1, String op2)
 	{
 		String dest = createTemp();
@@ -66,17 +69,19 @@ public class TAC
 		return dest;
 	}
 
-	public static void dec(String type, String dest, String val)
+	//TODO edit to assembly
+	public static String dec(String type, String dest, String val)
 	{
 		if(val.equals(""))
-			append("\t"+type + " " + dest);
+			return "\t"+type + " " + dest;
 		else 
-			append("\t"+type + " " + dest + " = " + val);
+			return "\t"+type + " " + dest + " = " + val;
 	}
 
-	public static String compare(String op1, String op, String op2)
+	//TODO edit to assembly
+	public static String compare(String op1, String op, String op2, String tval, String fval)
 	{
-		return (op1 + " " + op + " " + op2);
+		return "if" + " " + op1 + " " + op + " " + op2 + " goto " + tval + "\n\tgoto " + fval;
 	}
 
 	public static void ifElse(ASTNode cond, ASTNode ifbody, ASTNode elsebody, String next)
@@ -89,34 +94,38 @@ public class TAC
 		{
 			trueLabel = createLabel();
 			falselabel = next;
-			ifelsecode = "\t" + generate(cond, trueLabel, falselabel) + "\n" + trueLabel + "\n" + generate(ifbody, "", "");
+			ifelsecode = "\t" + generate(cond, trueLabel, falselabel) + "\n" + trueLabel + "\n" + generate(ifbody, "", "") + "\n" + next;
 		}
 		else
 		{
 			trueLabel = createLabel();
 			falselabel = createLabel();
-			ifelsecode = "\t" + generate(cond, trueLabel, falselabel) + "\n" + trueLabel + "\n" + generate(ifbody, "", "") + "\n\tgoto " + next + "\n" + falselabel + "\n" + generate(elsebody, "", "");
+			ifelsecode = "\t" + generate(cond, trueLabel, falselabel) + "\n" + trueLabel + "\n" + generate(ifbody, "", "") + "\n\tgoto " + next + "\n" + falselabel + "\n" + generate(elsebody, "", "")+ "\n" + next;
 		}
 
 		append(ifelsecode);
 	}
 
-	public static void and(String left, String right, String truelabel, String falselabel)
+	public static String and(ASTNode left, ASTNode right, String truelabel, String falselabel)
 	{
 		String ltrue = createLabel();
 		String lfalse = falselabel;
 		String rtrue = truelabel;
 		String rfalse = falselabel;
-		String andcode = "\t" + left + "\n" + ltrue + "\n\t" + right;
+		//String andcode = generate(left, ltrue, lfalse) + "\n" + ltrue + "\n\t" + generate(right, rtrue, rfalse);
+		String andcode = generate(right, rtrue, rfalse) + "\n" + ltrue + "\n\t" + generate(left, ltrue, lfalse);
+		return andcode;
 	}
 
-	public static void or(String left, String right, String truelabel, String falselabel)
+	public static String or(ASTNode left, ASTNode right, String truelabel, String falselabel)
 	{
 		String ltrue = truelabel;
 		String lfalse = createLabel();
 		String rtrue = truelabel;
 		String rfalse = falselabel;
-		String andcode = "\t" + left + "\n" + lfalse + "\n\t" + right;
+		//String orcode = generate(left, ltrue, lfalse) + "\n" + lfalse + "\n\t" + generate(right, rtrue, rfalse);
+		String orcode = generate(right, rtrue, rfalse) + "\n" + lfalse + "\n\t" + generate(left, ltrue, lfalse);
+		return orcode;
 	}
 	
 	public static void whileloop()
@@ -134,8 +143,8 @@ public class TAC
 		{
 			case "assignment": 
 			{	
-				assignment(node.bodyChildren.get(0).token, generate(node.bodyChildren.get(1), "", ""));
-				return "";
+				return assignment(node.bodyChildren.get(0).token, generate(node.bodyChildren.get(1), "", ""));
+				//return "";
 			}
 			case "+":
 			case "-":
@@ -159,10 +168,10 @@ public class TAC
 			case "declaration":
 			{	
 				if(node.bodyChildren.size() < 2)
-					dec(node.token, generate(node.bodyChildren.get(0), "", ""), "");
+					return dec(node.token, generate(node.bodyChildren.get(0), "", ""), "");
 				else
-					dec(node.token, generate(node.bodyChildren.get(0), "", ""), generate(node.bodyChildren.get(1), "", ""));
-				return "";
+					return dec(node.token, generate(node.bodyChildren.get(0), "", ""), generate(node.bodyChildren.get(1), "", ""));
+				//return "";
 			}
 			case "branch":
 			{
@@ -175,13 +184,13 @@ public class TAC
 			}
 			case "&&":
 			{
-				and(generate(node.bodyChildren.get(0), "", ""), generate(node.bodyChildren.get(1), "", ""), arg1, arg2);
-				return "";
+				return and(node.bodyChildren.get(0), node.bodyChildren.get(1), arg1, arg2);
+				//return "";
 			}
 			case "||":
 			{
-				or(generate(node.bodyChildren.get(0), "", ""), generate(node.bodyChildren.get(1), "", ""), arg1, arg2);
-				return "";
+				return or(node.bodyChildren.get(0), node.bodyChildren.get(1), arg1, arg2);
+				//return "";
 			}
 			case "<":
 			case ">":
@@ -190,16 +199,16 @@ public class TAC
 			case "==":
 			case "!=":
 			{
-				compare(generate(node.bodyChildren.get(0), "", ""), node.token, generate(node.bodyChildren.get(1), "", ""));
-				return ""; 
+				return compare(generate(node.bodyChildren.get(0), "", ""), node.token, generate(node.bodyChildren.get(1), "", ""), arg1, arg2);
+				//return ""; 
 			}
 			case "body":
 			{
 				for(ASTNode child : node.bodyChildren)
 				{
-					generate(child, "", "");
+					return generate(child, "", "");
 				}
-				return "";
+				//return "";
 			}
 			case "loop":
 			{
