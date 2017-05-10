@@ -341,7 +341,8 @@ public class ParseTable
         Deque<String> opStack = new ArrayDeque<String>();
         HashMap<String, ASTNode> nodes = new HashMap<String, ASTNode>();
         ArrayList<String> operations = new ArrayList<String>() {{
-			add("&&");add("||");
+			add("&&");
+			add("||");
 			add("==");add("!=");add(">=");add("<=");add("<");add(">");
 			add("+");add("-");
 			add("*");add("/");add("%");
@@ -725,17 +726,20 @@ public class ParseTable
 	
 	public ASTNode createFromInfix(ArrayList<IdEntry> infix) {        
 		ArrayList<String> operations = new ArrayList<String>() {{
-			add("&&");add("||");
+			add("&&");
+			add("||");
 			add("==");add("!=");add(">=");add("<=");add("<");add(">");
 			add("+");add("-");
 			add("*");add("/");add("%");
     		add("(");add(")");
 		}};
 		HashMap <String, Integer> precedenceOf = new HashMap<String, Integer>() {{
-			put("*", 4);put("/", 4);put("%", 4);
-			put("+", 3);put("-", 3);
-			put("==", 2);put("!=", 2);put(">=", 2);put("<=", 2);put("<", 2);put(">", 2);
-			put("&&", 1);put("||", 1);
+			put("*", 1);put("/", 1);put("%", 2);
+			put("+", 2);put("-", 2);
+			put(">=", 3);put("<=", 3);put("<", 3);put(">", 3);
+			put("==", 4);put("!=", 4);
+			put("&&", 5);
+			put("||", 6);
 		}};
         Deque<IdEntry> operators = new ArrayDeque<IdEntry>();
         Deque<ASTNode> postf = new ArrayDeque<ASTNode>();
@@ -764,7 +768,7 @@ public class ParseTable
 						operators.push(token);
 					} else {
 						while(topOp != null && !topOp.token.equals("(") && (precedenceOf.get(topOp.token) 
-								> precedenceOf.get(token.token))) {
+								< precedenceOf.get(token.token))) {
 							postfix.add(topOp);
 							operators.pop();
 							topOp = operators.peek();
@@ -790,8 +794,8 @@ public class ParseTable
 					IdEntry tmpOp = postfix.remove(0);
 					ASTNode tmpNode = new ASTNode(tmpOp.name, tmpOp.token);
 					
-					tmpNode.bodyChildren.add(postf.pop());
-					tmpNode.bodyChildren.add(postf.pop());
+					tmpNode.bodyChildren.add(0,postf.pop());
+					tmpNode.bodyChildren.add(0,postf.pop());
 					
 					if(!postf.isEmpty() || !postfix.isEmpty()) {
 						postf.push(tmpNode);

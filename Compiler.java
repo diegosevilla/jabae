@@ -17,7 +17,7 @@ public class Compiler {
 		for(IdEntry a : tokens) System.out.println(a.name + " " + a.token);
 		if(parser.Valid(tokens) && Error.errors.size() == 0) {
 			//System.out.println("Recognized!");
-			//parser.ast.printString("", false);
+			parser.ast.printString("", false);
 			//ParseTree.toString(ParseTree.getRoot(parser.pt),"",false);
 			TAC.genASM(parser.ast, args[0].split("\\.")[0] + ".asm");
 			createExecutable(args[0].split("\\.")[0]);
