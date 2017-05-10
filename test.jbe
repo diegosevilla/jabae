@@ -1,11 +1,19 @@
 YO!
 //Sho'me "Hello woeld"
 //Sho'me 4
-digits a = 1
-digits b = 2
-digits c = 3
-Check'dis(3 >= 2 || 2 >= 1 && 1 >= 0) {
-  ride d
-  c = a + b / c
+digits a = 2
+digits b = 3
+a = a + b
+Check'dis(3 >= 3)
+{
+	digits c = 2
+	digits d = 3
+	c = c + d
+}
+noh
+{
+	digits e = 2
+	digits f = 3
+	e = e + f
 }
 PEACEOUT!
