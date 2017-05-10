@@ -26,18 +26,20 @@ public class Compiler {
 			//parser.ast.printString("", false);
 			//ParseTree.toString(ParseTree.getRoot(parser.pt),"",false);
 			TAC.genASM(parser.ast, args[0].split("\\.")[0] + ".asm");
-			createSH(args[0].split("\\.")[0]);
+			createExecutable(args[0].split("\\.")[0]);
 		} else
 			Error.printErrors();
 	}
 
-	public static void createSH(String filename){
+	public static void createExecutable(String filename){
 		try{
 			Runtime.getRuntime().exec("nasm -f elf64 -o " + filename + ".o " + filename + ".asm");
 			Runtime.getRuntime().exec("ld -o " + filename + " " + filename + ".o");
 			//Runtime.getRuntime().exec("rm " + filename + ".asm");
-			//Runtime.getRuntime().exec("rm " + filename + ".o");
-		} catch(Exception e){}
+//			Runtime.getRuntime().exec("rm " + filename + ".o");
+		} catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 
 }

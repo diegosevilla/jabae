@@ -1,4 +1,7 @@
 import java.util.ArrayList;
+
+import javax.swing.JOptionPane;
+
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -32,26 +35,39 @@ public class TAC
 
 	public static void append(String newcode)
 	{
-		code = code + "\n" + newcode;
-	}
-	public static void declare(String newVar)
-	{
-		bss += "\n";
+		code += newcode;
+	}	
+	public static boolean isLiteral(String arg){
+		if(arg.startsWith("\"") && arg.endsWith("\""))
+				return true;
+		return false;
 	}
 	
-
 	public static void print(String arg)
 	{
-		arg = toString(arg);
-		data += "\tdata"+datacount + " db " + arg + ",10\n";
-		append("\tmov rax, 1\n\tmov rdi, 1\n\tmov rsi, data" + datacount + "\n\tmov rdx, "+(arg.length()-1)+"\n\tsyscall\n");
-		datacount++;
+		append("\tmov rax, 1\n");
+		append("\tmov rdi, 1\n");
+		JOptionPane.showMessageDialog(null, arg);
+		if(isLiteral(arg)){
+			data += "\tdata"+datacount + " db " + toString(arg)+"\n";
+			append("\tmov rsi, data" + datacount + "\n");
+			append("\tmov rdx, " + (arg.length()-2) + "\n");
+			datacount++;
+		} else {
+			append("\tmov rsi, " + arg + "\n");
+			append("\tmov rdx, 16\n");
+		}
+		append("\tsyscall\n\n");
+		
 	}
 
 	public static void read(String arg)
 	{
-		append("\tparam: " + arg);
-		append("\tcall Gimme");
+		append("\tmov rax, 0\n");
+		append("\tmov rdi, 0\n");
+		append("\tmov rsi, " + arg +"\n");
+		append("\tmov rdx, 16\n");
+		append("\tsyscall\n\n");
 	}
 
 	public static void assignment(String dest, String val)
@@ -68,9 +84,8 @@ public class TAC
 
 	public static void dec(String type, String dest, String val)
 	{
-		if(val.equals(""))
-			append("\t"+type + " " + dest);
-		else 
+		bss += "\t"+dest + " resb 16\n";
+		if(!val.equals(""))
 			append("\t"+type + " " + dest + " = " + val);
 	}
 
@@ -143,7 +158,7 @@ public class TAC
 			case "/":
 			case "%":
 			{
-				String temp = expr(node.token , generate(node.bodyChildren.get(0), "", ""), generate(node.bodyChildren.get(1), "", ""));
+				String temp = expr(node.token , generate(node.bodyChildren.get(1), "", ""), generate(node.bodyChildren.get(0), "", ""));
 				return temp;
 			}
 			case "output":
@@ -231,5 +246,6 @@ public class TAC
 			writer.flush();
 			writer.close();
 		} catch(Exception e){}
+		System.out.println(code);
 	}
 }
