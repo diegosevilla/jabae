@@ -1,10 +1,4 @@
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.ArrayList;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.io.File;
 
 public class Compiler {
 	public static int NUMLINES = 0;
