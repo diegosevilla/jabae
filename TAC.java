@@ -92,14 +92,14 @@ public class TAC
 	//TODO edit to assembly
 	public static void compare(String op1, String op, String op2, String tval, String fval)
 	{
-		append("if" + " " + op1 + " " + op + " " + op2 + " goto " + tval + "\n\tgoto " + fval);
+		append("\n\tif" + " " + op1 + " " + op + " " + op2 + " goto " + tval + "\n\tgoto " + fval/* + "\n" + tval*/);
 	}
 
 	public static void ifElse(ASTNode cond, ASTNode ifbody, ASTNode elsebody, String next)
 	{
 		String trueLabel;
 		String falselabel;
-		String ifelsecode;
+		//String ifelsecode;
 
 		if(elsebody == null)
 		{
@@ -108,7 +108,7 @@ public class TAC
 			//ifelsecode = "\t" + generate(cond, trueLabel, falselabel) + "\n" + trueLabel + "\n" + generate(ifbody, "", "") + "\n" + next;
 			append("\n\t");
 			generate(cond, trueLabel, falselabel);
-			append("\n" + trueLabel + "\n");
+			append("\n" + trueLabel);
 			generate(ifbody, "", "");
 			append("\n" + next);
 		}
@@ -119,9 +119,9 @@ public class TAC
 			//ifelsecode = "\t" + generate(cond, trueLabel, falselabel) + "\n" + trueLabel + "\n" + generate(ifbody, "", "") + "\n\tgoto " + next + "\n" + falselabel + "\n" + generate(elsebody, "", "")+ "\n" + next;
 			append("\n\t");
 			generate(cond, trueLabel, falselabel);
-			append("\n" + trueLabel + "\n");
+			append("\n" + trueLabel);
 			generate(ifbody, "", "");
-			append("\n\tgoto " + next + "\n" + falselabel + "\n");
+			append("\n\tgoto " + next + "\n" + falselabel);
 			generate(elsebody, "", "");
 			append("\n" + next);
 		}
@@ -129,31 +129,52 @@ public class TAC
 		//append(ifelsecode);
 	}
 
-	public static String and(ASTNode left, ASTNode right, String truelabel, String falselabel)
+	public static void and(ASTNode left, ASTNode right, String truelabel, String falselabel)
 	{
 		String ltrue = createLabel();
 		String lfalse = falselabel;
 		String rtrue = truelabel;
 		String rfalse = falselabel;
 		//String andcode = generate(left, ltrue, lfalse) + "\n" + ltrue + "\n\t" + generate(right, rtrue, rfalse);
-		String andcode = generate(right, rtrue, rfalse) + "\n" + ltrue + "\n\t" + generate(left, ltrue, lfalse);
-		return andcode;
+		generate(left, ltrue, lfalse);
+		append("\n" + ltrue);
+		generate(right, rtrue, rfalse);
+		//return andcode;
 	}
 
-	public static String or(ASTNode left, ASTNode right, String truelabel, String falselabel)
+	public static void or(ASTNode left, ASTNode right, String truelabel, String falselabel)
 	{
 		String ltrue = truelabel;
 		String lfalse = createLabel();
 		String rtrue = truelabel;
 		String rfalse = falselabel;
 		//String orcode = generate(left, ltrue, lfalse) + "\n" + lfalse + "\n\t" + generate(right, rtrue, rfalse);
-		String orcode = generate(right, rtrue, rfalse) + "\n" + lfalse + "\n\t" + generate(left, ltrue, lfalse);
-		return orcode;
+		generate(left, ltrue, lfalse);
+		append("\n" + lfalse);
+		generate(right, rtrue, rfalse);
+		//return orcode;
 	}
 	
-	public static void whileloop()
+	public static void whileloop(ASTNode cond, ASTNode loopbody, String next)
 	{
-
+		String begin = createLabel();
+		String trueLabel = createLabel();
+		String falseLabel = next;
+		append("\n" + begin);
+		generate(cond, trueLabel, falseLabel);
+		append("\n" + trueLabel);
+		generate(loopbody, "", "");
+		append("\n\tgoto" + begin);
+		append("\n" + next);
+	}
+	
+	public static void dowhileloop(ASTNode cond, ASTNode loopbody, String next)
+	{
+		String begin = createLabel();
+		append("\n" + begin);
+		generate(loopbody, "", "");
+		generate(cond, begin, next);
+		append("\n" + next);
 	}
 
 	public static String generate(ASTNode node, String arg1, String arg2)
@@ -207,13 +228,13 @@ public class TAC
 			}
 			case "&&":
 			{
-				return and(node.bodyChildren.get(0), node.bodyChildren.get(1), arg1, arg2);
-				//return "";
+				and(node.bodyChildren.get(0), node.bodyChildren.get(1), arg1, arg2);
+				return "";
 			}
 			case "||":
 			{
-				return or(node.bodyChildren.get(0), node.bodyChildren.get(1), arg1, arg2);
-				//return "";
+				or(node.bodyChildren.get(0), node.bodyChildren.get(1), arg1, arg2);
+				return "";
 			}
 			case "<":
 			case ">":
@@ -235,8 +256,19 @@ public class TAC
 			}
 			case "loop":
 			{
+				String newLabel = createLabel();
 				if(node.token.equals("NonStop'till"))
-					whileloop();
+				{
+					whileloop(node.bodyChildren.get(0), node.bodyChildren.get(1), newLabel);
+				}
+				if(node.token.equals("Do'dis"))
+				{
+					dowhileloop(node.bodyChildren.get(0), node.bodyChildren.get(1), newLabel);
+				}
+				if(node.token.equals("Pop'till"))
+				{
+					whileloop(node.bodyChildren.get(0), node.bodyChildren.get(1), newLabel);
+				}
 				return "";
 
 			}

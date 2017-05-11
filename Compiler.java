@@ -20,7 +20,7 @@ public class Compiler {
 			parser.ast.printString("", false);
 			//ParseTree.toString(ParseTree.getRoot(parser.pt),"",false);
 			TAC.genASM(parser.ast, args[0].split("\\.")[0] + ".asm");
-			createExecutable(args[0].split("\\.")[0]);
+			//createExecutable(args[0].split("\\.")[0]);
 		} else
 			Error.printErrors();
 	}

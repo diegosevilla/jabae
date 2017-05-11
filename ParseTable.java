@@ -149,7 +149,7 @@ public class ParseTable
 		Table[Row.get("Else-block'")][Col.get("{")] = "} Statement {";
 		
 		//Loop-block
-		Table[Row.get("Loop-block")][Col.get("Pop'till")] = "} Control-block Statement { ) Condition ( Pop'till Expr";
+		Table[Row.get("Loop-block")][Col.get("Pop'till")] = "} Control-block Statement { ) Condition ( Pop'till";
 		Table[Row.get("Loop-block")][Col.get("NonStop'till")] = "} Control-block Statement { ) Condition ( NonStop'till";
 		Table[Row.get("Loop-block")][Col.get("Do'dis")] = ") Condition ( NonStop'till } Control-block Statement { Do'dis";
 		
