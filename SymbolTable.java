@@ -186,4 +186,10 @@ public class SymbolTable
 
 		return m.matches();
 	}
+	
+	public static String getType(String varname)
+	{
+		IdEntry var = idLookup(varname, 0);
+		return var.dataType;
+	}
 }

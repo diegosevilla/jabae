@@ -67,7 +67,8 @@ public class TAC
 	//TODO edit to assembly
 	public static void assignment(String dest, String val)
 	{
-		append("\n\t"+dest + " = " + val);
+		
+		append("\nmov byte [" + dest + "], " + val + "\n\n");
 	}
 
 	//TODO edit to assembly
@@ -82,8 +83,8 @@ public class TAC
 	public static void dec(String type, String dest, String val)
 	{
 		bss += "\t"+dest + " resb 16\n";
-		//if(!val.equals(""))
-			//append("\n\t"+type + " " + dest + " = " + val);
+		if(!val.equals(""))
+			assignment(dest, val);
 	}
 
 	//TODO edit to assembly

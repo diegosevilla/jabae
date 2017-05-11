@@ -1,9 +1,7 @@
 YO!
 digits a = 2
-digits b = 3
-a = a + b
-Do'dis{
-	Sho'me "anek"
-	a = a + 1
-} NonStop'till(a < b)
+digits b = 65
+Sho'me b
+b = 66
+Sho'me b
 PEACEOUT!
