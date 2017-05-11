@@ -4,6 +4,7 @@ import java.io.FileReader;
 import java.util.ArrayList;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.File;
 
 public class Compiler {
@@ -33,7 +34,12 @@ public class Compiler {
 
 	public static void createExecutable(String filename){
 		try{
-			Runtime.getRuntime().exec("nasm -f elf64 -o " + filename + ".o " + filename + ".asm");
+			Process proc = Runtime.getRuntime().exec("nasm -f elf64 -o " + filename + ".o " + filename + ".asm");
+			BufferedReader stdError = new BufferedReader(new InputStreamReader(proc.getErrorStream()));
+			String s = "";
+			while ((s = stdError.readLine()) != null) {
+			    System.out.println(s);
+			}
 			Runtime.getRuntime().exec("ld -o " + filename + " " + filename + ".o");
 			//Runtime.getRuntime().exec("rm " + filename + ".asm");
 //			Runtime.getRuntime().exec("rm " + filename + ".o");
