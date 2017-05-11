@@ -1,6 +1,9 @@
 YO!
-digits a
-Sho'me "Enter num: "
-Gimme a
-Sho'me a
+digits a = 2
+digits b = 3
+a = a + b
+Do'dis{
+	Sho'me "anek"
+	a = a + 1
+} NonStop'till(a < b)
 PEACEOUT!

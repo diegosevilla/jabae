@@ -1,11 +1,5 @@
-import java.util.ArrayList;
-
-import javax.swing.JOptionPane;
-
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.File;
+import java.io.FileWriter;
 
 public class TAC
 {
@@ -47,7 +41,6 @@ public class TAC
 	{
 		append("\tmov rax, 1\n");
 		append("\tmov rdi, 1\n");
-		JOptionPane.showMessageDialog(null, arg);
 		if(isLiteral(arg)){
 			data += "\tdata"+datacount + " db " + toString(arg)+"\n";
 			append("\tmov rsi, data" + datacount + "\n");
@@ -61,6 +54,7 @@ public class TAC
 		
 	}
 
+	//TODO edit to assembly
 	public static void read(String arg)
 	{
 		append("\tmov rax, 0\n");
@@ -70,73 +64,114 @@ public class TAC
 		append("\tsyscall\n\n");
 	}
 
+	//TODO edit to assembly
 	public static void assignment(String dest, String val)
 	{
-		append("\t"+dest + " = " + val);
+		append("\n\t"+dest + " = " + val);
 	}
 
+	//TODO edit to assembly
 	public static String expr(String op, String op1, String op2)
 	{
 		String dest = createTemp();
-		append("\t"+dest + " = " + op1 + " " + op + " " + op2);
+		append("\n\t"+dest + " = " + op1 + " " + op + " " + op2);
 		return dest;
 	}
 
+	//TODO edit to assembly
 	public static void dec(String type, String dest, String val)
 	{
 		bss += "\t"+dest + " resb 16\n";
-		if(!val.equals(""))
-			append("\t"+type + " " + dest + " = " + val);
+		//if(!val.equals(""))
+			//append("\n\t"+type + " " + dest + " = " + val);
 	}
 
-	public static String compare(String op1, String op, String op2)
+	//TODO edit to assembly
+	public static void compare(String op1, String op, String op2, String tval, String fval)
 	{
-		return (op1 + " " + op + " " + op2);
+		append("\n\tif" + " " + op1 + " " + op + " " + op2 + " goto " + tval + "\n\tgoto " + fval/* + "\n" + tval*/);
 	}
 
 	public static void ifElse(ASTNode cond, ASTNode ifbody, ASTNode elsebody, String next)
 	{
 		String trueLabel;
 		String falselabel;
-		String ifelsecode;
+		//String ifelsecode;
 
 		if(elsebody == null)
 		{
 			trueLabel = createLabel();
 			falselabel = next;
-			ifelsecode = "\t" + generate(cond, trueLabel, falselabel) + "\n" + trueLabel + "\n" + generate(ifbody, "", "");
+			//ifelsecode = "\t" + generate(cond, trueLabel, falselabel) + "\n" + trueLabel + "\n" + generate(ifbody, "", "") + "\n" + next;
+			append("\n\t");
+			generate(cond, trueLabel, falselabel);
+			append("\n" + trueLabel);
+			generate(ifbody, "", "");
+			append("\n" + next);
 		}
 		else
 		{
 			trueLabel = createLabel();
 			falselabel = createLabel();
-			ifelsecode = "\t" + generate(cond, trueLabel, falselabel) + "\n" + trueLabel + "\n" + generate(ifbody, "", "") + "\n\tgoto " + next + "\n" + falselabel + "\n" + generate(elsebody, "", "");
+			//ifelsecode = "\t" + generate(cond, trueLabel, falselabel) + "\n" + trueLabel + "\n" + generate(ifbody, "", "") + "\n\tgoto " + next + "\n" + falselabel + "\n" + generate(elsebody, "", "")+ "\n" + next;
+			append("\n\t");
+			generate(cond, trueLabel, falselabel);
+			append("\n" + trueLabel);
+			generate(ifbody, "", "");
+			append("\n\tgoto " + next + "\n" + falselabel);
+			generate(elsebody, "", "");
+			append("\n" + next);
 		}
 
-		append(ifelsecode);
+		//append(ifelsecode);
 	}
 
-	public static void and(String left, String right, String truelabel, String falselabel)
+	public static void and(ASTNode left, ASTNode right, String truelabel, String falselabel)
 	{
 		String ltrue = createLabel();
 		String lfalse = falselabel;
 		String rtrue = truelabel;
 		String rfalse = falselabel;
-		String andcode = "\t" + left + "\n" + ltrue + "\n\t" + right;
+		//String andcode = generate(left, ltrue, lfalse) + "\n" + ltrue + "\n\t" + generate(right, rtrue, rfalse);
+		generate(left, ltrue, lfalse);
+		append("\n" + ltrue);
+		generate(right, rtrue, rfalse);
+		//return andcode;
 	}
 
-	public static void or(String left, String right, String truelabel, String falselabel)
+	public static void or(ASTNode left, ASTNode right, String truelabel, String falselabel)
 	{
 		String ltrue = truelabel;
 		String lfalse = createLabel();
 		String rtrue = truelabel;
 		String rfalse = falselabel;
-		String andcode = "\t" + left + "\n" + lfalse + "\n\t" + right;
+		//String orcode = generate(left, ltrue, lfalse) + "\n" + lfalse + "\n\t" + generate(right, rtrue, rfalse);
+		generate(left, ltrue, lfalse);
+		append("\n" + lfalse);
+		generate(right, rtrue, rfalse);
+		//return orcode;
 	}
 	
-	public static void whileloop()
+	public static void whileloop(ASTNode cond, ASTNode loopbody, String next)
 	{
-
+		String begin = createLabel();
+		String trueLabel = createLabel();
+		String falseLabel = next;
+		append("\n" + begin);
+		generate(cond, trueLabel, falseLabel);
+		append("\n" + trueLabel);
+		generate(loopbody, "", "");
+		append("\n\tgoto" + begin);
+		append("\n" + next);
+	}
+	
+	public static void dowhileloop(ASTNode cond, ASTNode loopbody, String next)
+	{
+		String begin = createLabel();
+		append("\n" + begin);
+		generate(loopbody, "", "");
+		generate(cond, begin, next);
+		append("\n" + next);
 	}
 
 	public static String generate(ASTNode node, String arg1, String arg2)
@@ -190,12 +225,12 @@ public class TAC
 			}
 			case "&&":
 			{
-				and(generate(node.bodyChildren.get(0), "", ""), generate(node.bodyChildren.get(1), "", ""), arg1, arg2);
+				and(node.bodyChildren.get(0), node.bodyChildren.get(1), arg1, arg2);
 				return "";
 			}
 			case "||":
 			{
-				or(generate(node.bodyChildren.get(0), "", ""), generate(node.bodyChildren.get(1), "", ""), arg1, arg2);
+				or(node.bodyChildren.get(0), node.bodyChildren.get(1), arg1, arg2);
 				return "";
 			}
 			case "<":
@@ -205,7 +240,7 @@ public class TAC
 			case "==":
 			case "!=":
 			{
-				compare(generate(node.bodyChildren.get(0), "", ""), node.token, generate(node.bodyChildren.get(1), "", ""));
+				compare(generate(node.bodyChildren.get(0), "", ""), node.token, generate(node.bodyChildren.get(1), "", ""), arg1, arg2);
 				return ""; 
 			}
 			case "body":
@@ -218,8 +253,19 @@ public class TAC
 			}
 			case "loop":
 			{
+				String newLabel = createLabel();
 				if(node.token.equals("NonStop'till"))
-					whileloop();
+				{
+					whileloop(node.bodyChildren.get(0), node.bodyChildren.get(1), newLabel);
+				}
+				if(node.token.equals("Do'dis"))
+				{
+					dowhileloop(node.bodyChildren.get(0), node.bodyChildren.get(1), newLabel);
+				}
+				if(node.token.equals("Pop'till"))
+				{
+					whileloop(node.bodyChildren.get(0), node.bodyChildren.get(1), newLabel);
+				}
 				return "";
 
 			}
@@ -235,7 +281,7 @@ public class TAC
 	public static void genASM(ASTNode node, String filename)
 	{
 		generate(node, "", "");
-		append("\tmov rax, 60\n\tmov rdi, 0\n\tsyscall\n");
+		append("\n\tmov rax, 60\n\tmov rdi, 0\n\tsyscall\n");
 		try{
 			File file = new File(filename);
 

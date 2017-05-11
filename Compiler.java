@@ -1,11 +1,6 @@
-import java.io.BufferedReader;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.util.ArrayList;
-import java.io.FileWriter;
-import java.io.IOException;
 import java.io.InputStreamReader;
-import java.io.File;
+import java.io.BufferedReader;
 
 public class Compiler {
 	public static int NUMLINES = 0;
@@ -24,7 +19,7 @@ public class Compiler {
 		for(IdEntry a : tokens) System.out.println(a.name + " " + a.token);
 		if(parser.Valid(tokens) && Error.errors.size() == 0) {
 			//System.out.println("Recognized!");
-			//parser.ast.printString("", false);
+			parser.ast.printString("", false);
 			//ParseTree.toString(ParseTree.getRoot(parser.pt),"",false);
 			TAC.genASM(parser.ast, args[0].split("\\.")[0] + ".asm");
 			createExecutable(args[0].split("\\.")[0]);
@@ -40,7 +35,10 @@ public class Compiler {
 			while ((s = stdError.readLine()) != null) {
 			    System.out.println(s);
 			}
-			Runtime.getRuntime().exec("ld -o " + filename + " " + filename + ".o");
+			proc = Runtime.getRuntime().exec("ld -o " + filename + " " + filename + ".o");
+			while ((s = stdError.readLine()) != null) {
+			    System.out.println(s);
+			}
 			//Runtime.getRuntime().exec("rm " + filename + ".asm");
 //			Runtime.getRuntime().exec("rm " + filename + ".o");
 		} catch(Exception e){
