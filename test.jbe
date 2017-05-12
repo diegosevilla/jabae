@@ -1,7 +1,9 @@
 YO!
 digits a = 3
-digits b = 7
+digits b = 2
 Check'dis(b >= a){
 	Sho'me "hello"
+} noh {
+	Sho'me "hello mader fucker!"
 }
 PEACEOUT!

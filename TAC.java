@@ -165,13 +165,13 @@ public class TAC
 			trueLabel = createLabel();
 			falselabel = createLabel();
 			//ifelsecode = "\t" + generate(cond, trueLabel, falselabel) + "\n" + trueLabel + "\n" + generate(ifbody, "", "") + "\n\tgoto " + next + "\n" + falselabel + "\n" + generate(elsebody, "", "")+ "\n" + next;
-			append("\n\t");
 			generate(cond, trueLabel, falselabel);
-			append("\n" + trueLabel);
+			append("\n" + trueLabel + ": \n");
 			generate(ifbody, "", "");
-			append("\n\tgoto " + next + "\n" + falselabel);
+			append("\tjmp " + next + "\n\n");
+			append(falselabel + ": \n");
 			generate(elsebody, "", "");
-			append("\n" + next);
+			append("\n" + next + ": \n");
 		}
 
 		//append(ifelsecode);
