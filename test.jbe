@@ -1,9 +1,7 @@
 YO!
-ride b = '6'
-ride a = '5'
-Sho'me a
-a = b
-Sho'me a
-b = 'b'
-Sho'me b
+digits a = 3
+digits b = 7
+Check'dis(b >= a){
+	Sho'me "hello"
+}
 PEACEOUT!

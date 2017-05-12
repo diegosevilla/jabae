@@ -34,6 +34,19 @@ public class TAC
 		}
 		return false;
 	}
+	
+	public static String getJumpValue(String op){
+		switch(op)
+		{
+			case "==": return "je ";
+			case "!=": return "jne ";
+			case ">" : return "jg ";
+			case "<" : return "jl ";
+			case ">=": return "jge ";
+			case "<=": return "jle ";
+		}
+		return "";
+	}
 
 	public static String createTemp()
 	{
@@ -107,7 +120,29 @@ public class TAC
 	//TODO edit to assembly
 	public static void compare(String op1, String op, String op2, String tval, String fval)
 	{
-		append("\n\tif" + " " + op1 + " " + op + " " + op2 + " goto " + tval + "\n\tgoto " + fval/* + "\n" + tval*/);
+		boolean op1Lit = isLiteral(op1);
+		boolean op2Lit = isLiteral(op2);
+		if(op1Lit && op2Lit)
+		{
+			append("\tmov byte al, " + op1 +"\n");
+			append("\tmov byte bl, " + op2 + "\n");
+			append("\tcmp byte al, bl\n");
+		}
+		else if(!op1Lit && op2Lit)
+		{
+			append("\tcmp byte ["+ op1 + "], " + op2 + "\n");
+		} else if(op1Lit && !op2Lit){
+			append("\tmov byte al, " + op1 + "\n");
+			append("\tcmp byte al, [" + op2 + "]\n");
+		} else
+		{
+			append("\tmov byte al, [" + op1 + "]\n");
+			append("\tcmp byte al, [" + op2 + "]\n");
+		}
+		
+		append("\t" + getJumpValue(op) + tval + "\n");
+		append("\tjmp " + fval +  "\n\n");
+
 	}
 
 	public static void ifElse(ASTNode cond, ASTNode ifbody, ASTNode elsebody, String next)
@@ -120,12 +155,10 @@ public class TAC
 		{
 			trueLabel = createLabel();
 			falselabel = next;
-			//ifelsecode = "\t" + generate(cond, trueLabel, falselabel) + "\n" + trueLabel + "\n" + generate(ifbody, "", "") + "\n" + next;
-			append("\n\t");
 			generate(cond, trueLabel, falselabel);
-			append("\n" + trueLabel);
+			append(trueLabel + ": \n");
 			generate(ifbody, "", "");
-			append("\n" + next);
+			append(next + ": \n");
 		}
 		else
 		{
@@ -278,7 +311,7 @@ public class TAC
 				}
 				if(node.token.equals("Do'dis"))
 				{
-					dowhileloop(node.bodyChildren.get(0), node.bodyChildren.get(1), newLabel);
+					dowhileloop(node.bodyChildren.get(1), node.bodyChildren.get(0), newLabel);
 				}
 				if(node.token.equals("Pop'till"))
 				{
