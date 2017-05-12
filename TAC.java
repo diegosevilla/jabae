@@ -278,7 +278,7 @@ public class TAC
 				}
 				if(node.token.equals("Do'dis"))
 				{
-					dowhileloop(node.bodyChildren.get(0), node.bodyChildren.get(1), newLabel);
+					dowhileloop(node.bodyChildren.get(1), node.bodyChildren.get(0), newLabel);
 				}
 				if(node.token.equals("Pop'till"))
 				{
