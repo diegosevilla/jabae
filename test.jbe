@@ -1,7 +1,9 @@
 YO!
-digits a = 2
-digits b = 65
-Sho'me b
-b = 66
+ride b = '6'
+ride a = '5'
+Sho'me a
+a = b
+Sho'me a
+b = 'b'
 Sho'me b
 PEACEOUT!

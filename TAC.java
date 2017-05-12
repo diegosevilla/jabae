@@ -1,5 +1,7 @@
 import java.io.File;
 import java.io.FileWriter;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TAC
 {
@@ -17,6 +19,21 @@ public class TAC
 		else 
 			return "\""+ arg + "\"";
 	}
+	
+	public static boolean isLiteral(String arg){
+		String[] patterns = new String[4];
+		patterns[0] = "[\\\"].+[\\\"]";
+		patterns[1] = "[\\\'].[\\\']";
+		patterns[2] = "[-+]?[0-9]+\\.[0-9]+";
+		patterns[3] = "[-+]?[0-9]+";
+		for(int i = 0 ; i < patterns.length ; i++){
+			Pattern pat = Pattern.compile(patterns[i]);
+			Matcher m = pat.matcher(arg);
+			if(m.matches())
+				return true;
+		}
+		return false;
+	}
 
 	public static String createTemp()
 	{
@@ -31,11 +48,6 @@ public class TAC
 	{
 		code += newcode;
 	}	
-	public static boolean isLiteral(String arg){
-		if(arg.startsWith("\"") && arg.endsWith("\""))
-				return true;
-		return false;
-	}
 	
 	public static void print(String arg)
 	{
@@ -67,8 +79,13 @@ public class TAC
 	//TODO edit to assembly
 	public static void assignment(String dest, String val)
 	{
-		
-		append("\nmov byte [" + dest + "], " + val + "\n\n");
+		if(isLiteral(val))
+			append("\tmov byte [" + dest + "], " + val + "\n\n");
+		else
+		{
+			append("\tmov byte al, [" + val + "]\n");
+			append("\tmov byte [" + dest + "], al\n\n");
+		}
 	}
 
 	//TODO edit to assembly
@@ -282,7 +299,7 @@ public class TAC
 	public static void genASM(ASTNode node, String filename)
 	{
 		generate(node, "", "");
-		append("\n\tmov rax, 60\n\tmov rdi, 0\n\tsyscall\n");
+		append("\tmov rax, 60\n\tmov rdi, 0\n\tsyscall\n\n");
 		try{
 			File file = new File(filename);
 

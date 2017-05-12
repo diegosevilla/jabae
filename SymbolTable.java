@@ -62,9 +62,6 @@ public class SymbolTable
 		lexemes.add("tigel");
 		patterns.put("[\\\"].+[\\\"]", "39, String Literal");
 		patterns.put("[\\\'].[\\\']", "40, ride");
-		//Integer literals in an operation without spaces can't be read
-		//Float literals can't be read because when the decimal point is read
-		//it registers as an integer literal
 		patterns.put("[-+]?[0-9]+\\.[0-9]+", "43, moolah");
 		patterns.put("[-+]?[0-9]+", "42, digits");
 		patterns.put("[a-zA-Z][A-Za-z0-9]*", "41, Variable");
