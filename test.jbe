@@ -1,8 +1,10 @@
 YO!
-digits a = 3
+digits a = 65
 digits b = 2
-Do'dis{
-	Sho'me "hello"
-}NonStop'till(a > b)
-Sho'me "dasda"
+//Gimme a
+Sho'me a
+a = a + 10
+Sho'me a
+a = a - 3
+Sho'me a
 PEACEOUT!

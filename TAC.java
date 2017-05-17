@@ -3,6 +3,8 @@ import java.io.FileWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
+
 public class TAC
 {
 	static int tempcount = 0;
@@ -64,7 +66,6 @@ public class TAC
 	
 	public static void print(String arg)
 	{
-		append("\n");
 		append("\tmov rax, 1\n");
 		append("\tmov rdi, 1\n");
 		if(isLiteral(arg)){
@@ -74,7 +75,7 @@ public class TAC
 			datacount++;
 		} else {
 			append("\tmov rsi, " + arg + "\n");
-			append("\tmov rdx, 16\n");
+			append("\tmov rdx, 1\n");
 		}
 		append("\tsyscall\n\n");
 		
@@ -82,23 +83,45 @@ public class TAC
 
 	public static void read(String arg)
 	{
-		append("\n");
 		append("\tmov rax, 0\n");
 		append("\tmov rdi, 0\n");
 		append("\tmov rsi, " + arg +"\n");
 		append("\tmov rdx, 16\n");
 		append("\tsyscall\n\n");
+		
+		if(SymbolTable.getType(arg).equals("digits"))
+		{
+			append("\txor eax, eax\n");
+			append("\tmov ebx, 10\n");
+			append("\tmov rsi, "+arg+"\n\n");
+			append("\t"+arg+"toInt:\n");
+			append("\t\tcmp byte [rsi], 10\n");
+			append("\t\tje end"+arg+"convert\n");
+			append("\t\tcmp byte [rsi], '0'\n");
+			append("\t\tjl end"+arg+"convert\n");
+			append("\t\tcmp byte [rsi], '9'\n");
+			append("\t\tjg end"+arg+"convert\n\n");
+			append("\t\tsub byte [rsi], '0'\n");
+			append("\t\tmul ebx\n");
+			append("\t\tadd eax, [rsi]\n");
+			append("\t\tinc rsi\n");
+			append("\t\tjmp " + arg+"toInt\n\n");
+			append("\tend"+arg+"convert:\n");
+			append("\t\tmov ["+arg+"], eax\n\n");
+		
+		}
 	}
 
 	public static void assignment(String dest, String val)
-	{
-		append("\n");
+	{	
 		if(isLiteral(val))
-			append("\tmov byte [" + dest + "], " + val + "\n");
-		else
+			append("\tmov byte [" + dest + "], " + val + "\n\n");
+		else if(SymbolTable.idLookup(val, 0) != null)
 		{
 			append("\tmov byte al, [" + val + "]\n");
-			append("\tmov byte [" + dest + "], al\n");
+			append("\tmov byte [" + dest + "], al\n\n");
+		} else {
+			append("\tmov ["+dest+"], "+ val +"\n\n");
 		}
 	}
 	
@@ -108,29 +131,26 @@ public class TAC
 		append("\n");
 		if(op.equals("+") || op.equals("-"))
 		{
-			if(isLiteral(op1))
-			{
-				append("\tmov eax, " + op1 + "\n");
-			}
-			else
-			{
-				append("\tmov eax, [" + op1 + "]\n");
-			}
-			append("\tsub eax, '0'\n");
-			
 			if(isLiteral(op2))
 			{
-				append("\tmov ebx, " + op2 + "\n");
+				append("\tmov eax, " + op2 + "\n");
 			}
 			else
 			{
-				append("\tmov ebx, [" + op2 + "]\n");
+				append("\tmov eax, [" + op2 + "]\n");
 			}
-			append("\tsub ebx, '0'\n");
 			
-			append("\tadd eax, abx\n");
-			append("\tadd eax, '0'\n");
-			append("\tmov [" + dest + "], eax\n");
+			if(isLiteral(op1))
+			{
+				append("\tmov ebx, " + op1 + "\n");
+			}
+			else
+			{
+				append("\tmov ebx, [" + op1 + "]\n");
+			}
+			
+			append(op.equals("+")? "\tadd eax, ebx\n" : "\tsub eax, ebx\n");
+			return "eax";
 		}
 		else if(op.equals("*"))
 		{
@@ -435,7 +455,7 @@ public class TAC
 	public static void genASM(ASTNode node, String filename)
 	{
 		generate(node, "", "");
-		append("\n\tmov rax, 60\n\tmov rdi, 0\n\tsyscall\n\n");
+		append("\tmov rax, 60\n\tmov rdi, 0\n\tsyscall\n\n");
 		try{
 			File file = new File(filename);
 
@@ -446,6 +466,6 @@ public class TAC
 			writer.flush();
 			writer.close();
 		} catch(Exception e){}
-		System.out.println(code);
+		//System.out.println(code);
 	}
 }
