@@ -1,9 +1,8 @@
 YO!
 digits a = 3
 digits b = 2
-Check'dis(b >= a){
+Do'dis{
 	Sho'me "hello"
-} noh {
-	Sho'me "hello mader fucker!"
-}
+}NonStop'till(a > b)
+Sho'me "dasda"
 PEACEOUT!

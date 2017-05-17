@@ -208,21 +208,21 @@ public class TAC
 		String begin = createLabel();
 		String trueLabel = createLabel();
 		String falseLabel = next;
-		append("\n" + begin);
+		append(begin + ": \n");
 		generate(cond, trueLabel, falseLabel);
-		append("\n" + trueLabel);
+		append(trueLabel + ": \n");
 		generate(loopbody, "", "");
-		append("\n\tgoto" + begin);
-		append("\n" + next);
+		append("\tjmp " + begin +"\n");
+		append(next + ": \n");
 	}
 	
 	public static void dowhileloop(ASTNode cond, ASTNode loopbody, String next)
 	{
 		String begin = createLabel();
-		append("\n" + begin);
+		append(begin+": \n");
 		generate(loopbody, "", "");
 		generate(cond, begin, next);
-		append("\n" + next);
+		append(next+": \n");
 	}
 
 	public static String generate(ASTNode node, String arg1, String arg2)
