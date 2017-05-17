@@ -64,6 +64,7 @@ public class TAC
 	
 	public static void print(String arg)
 	{
+		append("\n");
 		append("\tmov rax, 1\n");
 		append("\tmov rdi, 1\n");
 		if(isLiteral(arg)){
@@ -79,9 +80,9 @@ public class TAC
 		
 	}
 
-	//TODO edit to assembly
 	public static void read(String arg)
 	{
+		append("\n");
 		append("\tmov rax, 0\n");
 		append("\tmov rdi, 0\n");
 		append("\tmov rsi, " + arg +"\n");
@@ -89,27 +90,129 @@ public class TAC
 		append("\tsyscall\n\n");
 	}
 
-	//TODO edit to assembly
 	public static void assignment(String dest, String val)
 	{
+		append("\n");
 		if(isLiteral(val))
-			append("\tmov byte [" + dest + "], " + val + "\n\n");
+			append("\tmov byte [" + dest + "], " + val + "\n");
 		else
 		{
 			append("\tmov byte al, [" + val + "]\n");
-			append("\tmov byte [" + dest + "], al\n\n");
+			append("\tmov byte [" + dest + "], al\n");
 		}
 	}
-
-	//TODO edit to assembly
+	
 	public static String expr(String op, String op1, String op2)
 	{
 		String dest = createTemp();
-		append("\n\t"+dest + " = " + op1 + " " + op + " " + op2);
+		append("\n");
+		if(op.equals("+") || op.equals("-"))
+		{
+			if(isLiteral(op1))
+			{
+				append("\tmov eax, " + op1 + "\n");
+			}
+			else
+			{
+				append("\tmov eax, [" + op1 + "]\n");
+			}
+			append("\tsub eax, '0'\n");
+			
+			if(isLiteral(op2))
+			{
+				append("\tmov ebx, " + op2 + "\n");
+			}
+			else
+			{
+				append("\tmov ebx, [" + op2 + "]\n");
+			}
+			append("\tsub ebx, '0'\n");
+			
+			append("\tadd eax, abx\n");
+			append("\tadd eax, '0'\n");
+			append("\tmov [" + dest + "], eax\n");
+		}
+		else if(op.equals("*"))
+		{
+			if(isLiteral(op1))
+			{
+				append("\tmov al, " + op1 + "\n");
+			}
+			else
+			{
+				append("\tmov al, [" + op1 + "]\n");
+			}
+			append("\tsub al, '0'\n");
+			
+			if(isLiteral(op2))
+			{
+				append("\tmov bl, " + op2 + "\n");
+			}
+			else
+			{
+				append("\tmov bl, [" + op2 + "]\n");
+			}
+			append("\tsub bl, '0'\n");
+
+			append("\tmul bl\n");
+			append("\tadd al, '0'\n");
+			append("\tmov [" + dest + "], al\n");
+		}
+		else if(op.equals("/"))
+		{
+			if(isLiteral(op1))
+			{
+				append("\tmov ax, " + op1 + "\n");
+			}
+			else
+			{
+				append("\tmov ax, [" + op1 + "]\n");
+			}
+			append("\tsub al, '0'\n");
+			
+			if(isLiteral(op2))
+			{
+				append("\tmov bl, " + op2 + "\n");
+			}
+			else
+			{
+				append("\tmov bl, [" + op2 + "]\n");
+			}
+			append("\tsub bl, '0'\n");
+
+			append("\tdiv bl\n");
+			append("\tadd ax, '0'\n");
+			append("\tmov [" + dest + "], al\n");
+		}
+		else if(op.equals("%"))
+		{
+			if(isLiteral(op1))
+			{
+				append("\tmov ax, " + op1 + "\n");
+			}
+			else
+			{
+				append("\tmov ax, [" + op1 + "]\n");
+			}
+			append("\tsub al, '0'\n");
+			
+			if(isLiteral(op2))
+			{
+				append("\tmov bl, " + op2 + "\n");
+			}
+			else
+			{
+				append("\tmov bl, [" + op2 + "]\n");
+			}
+			append("\tsub bl, '0'\n");
+
+			append("\tdiv bl\n");
+			append("\tadd ax, '0'\n");
+			append("\tmov [" + dest + "], ah\n");
+		}
 		return dest;
 	}
 
-	//TODO edit to assembly
 	public static void dec(String type, String dest, String val)
 	{
 		bss += "\t"+dest + " resb 16\n";
@@ -117,9 +220,9 @@ public class TAC
 			assignment(dest, val);
 	}
 
-	//TODO edit to assembly
 	public static void compare(String op1, String op, String op2, String tval, String fval)
 	{
+		append("\n");
 		boolean op1Lit = isLiteral(op1);
 		boolean op2Lit = isLiteral(op2);
 		if(op1Lit && op2Lit)
@@ -332,7 +435,7 @@ public class TAC
 	public static void genASM(ASTNode node, String filename)
 	{
 		generate(node, "", "");
-		append("\tmov rax, 60\n\tmov rdi, 0\n\tsyscall\n\n");
+		append("\n\tmov rax, 60\n\tmov rdi, 0\n\tsyscall\n\n");
 		try{
 			File file = new File(filename);
 
