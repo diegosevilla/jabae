@@ -11,7 +11,7 @@ public class ParseTable
 {
 	Hashtable<String, Integer> Row = new Hashtable<String, Integer>();
 	Hashtable<String, Integer> Col = new Hashtable<String, Integer>();
-	ASTNode ast;
+	ASTNode ast = null;
 	String[][] Table = new String[26][45];
 	String[][] pattern = new String[][]{
 								{"[\\\'].[\\\']", "ride"}, 
@@ -534,6 +534,7 @@ public class ParseTable
 					
 					//Parse Tree
 					temp = stack.pop();
+					
 					switch(temp) {
 						case "If-block":
 							//Push If-block to op stack

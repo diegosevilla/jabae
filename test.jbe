@@ -1,10 +1,12 @@
 YO!
-digits a = 65
+digits a = 33
 digits b = 2
-//Gimme a
 Sho'me a
-a = a + 10
+a = a*b
 Sho'me a
-a = a - 3
+a = a/b
+Sho'me a
+a = 100
+a = 166 % a
 Sho'me a
 PEACEOUT!

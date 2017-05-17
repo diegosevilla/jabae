@@ -7,13 +7,13 @@ import javax.swing.JOptionPane;
 
 public class TAC
 {
-	static int tempcount = 0;
+	static int tempcount = 8;
 	static int labelcount = 0;
 	static int datacount = 0;
-	static String data = "section .data\n";
-	static String bss = "\nsection .bss\n";
-	static String text = "\nsection .text\n\tglobal _start\n";
-	static String code = "\n_start:\n";
+	static String data = "section .data\n\n";
+	static String bss = "section .bss\n\n";
+	static String text = "section .text\n\tglobal _start\n\n";
+	static String code = "_start:\n";
 
 	public static String toString(String arg){
 		if(arg.startsWith("\"") && arg.endsWith("\""))
@@ -52,7 +52,9 @@ public class TAC
 
 	public static String createTemp()
 	{
-		return "temp" + tempcount++;
+		String temp = "r" + tempcount;
+		tempcount = (tempcount + 1) % 4 + 8;
+		return temp;
 	}
 	public static String createLabel()
 	{
@@ -127,110 +129,55 @@ public class TAC
 	
 	public static String expr(String op, String op1, String op2)
 	{
-		String dest = createTemp();
-		append("\n");
+		String dest = "";
 		if(op.equals("+") || op.equals("-"))
 		{
-			if(isLiteral(op2))
-			{
-				append("\tmov eax, " + op2 + "\n");
-			}
-			else
-			{
-				append("\tmov eax, [" + op2 + "]\n");
-			}
+			if((SymbolTable.idLookup(op2, 0) != null))
+				op2 = "["+op2+"]";
+			append("\tmov eax, " + op2 + "\n");
 			
-			if(isLiteral(op1))
-			{
-				append("\tmov ebx, " + op1 + "\n");
-			}
-			else
-			{
-				append("\tmov ebx, [" + op1 + "]\n");
-			}
+			if((SymbolTable.idLookup(op1, 0) != null))
+				op1 = "["+op1+"]";
+			append("\tmov ebx, " + op1 + "\n");
 			
 			append(op.equals("+")? "\tadd eax, ebx\n" : "\tsub eax, ebx\n");
-			return "eax";
 		}
 		else if(op.equals("*"))
 		{
-			if(isLiteral(op1))
-			{
-				append("\tmov al, " + op1 + "\n");
-			}
-			else
-			{
-				append("\tmov al, [" + op1 + "]\n");
-			}
-			append("\tsub al, '0'\n");
+			if((SymbolTable.idLookup(op2, 0) != null))
+				op2 = "["+op2+"]";
+			append("\tmov eax, " + op2 + "\n");
 			
-			if(isLiteral(op2))
-			{
-				append("\tmov bl, " + op2 + "\n");
-			}
-			else
-			{
-				append("\tmov bl, [" + op2 + "]\n");
-			}
-			append("\tsub bl, '0'\n");
-
-			append("\tmul bl\n");
-			append("\tadd al, '0'\n");
-			append("\tmov [" + dest + "], al\n");
+			if((SymbolTable.idLookup(op1, 0) != null))
+				op1 = "["+op1+"]";
+			append("\tmov ebx, " + op1 + "\n");
+			append("\tmul ebx\n\n");
 		}
 		else if(op.equals("/"))
 		{
-			if(isLiteral(op1))
-			{
-				append("\tmov ax, " + op1 + "\n");
-			}
-			else
-			{
-				append("\tmov ax, [" + op1 + "]\n");
-			}
-			append("\tsub al, '0'\n");
+			if((SymbolTable.idLookup(op2, 0) != null))
+				op2 = "["+op2+"]";
+			append("\tmov eax, " + op2 + "\n");
 			
-			if(isLiteral(op2))
-			{
-				append("\tmov bl, " + op2 + "\n");
-			}
-			else
-			{
-				append("\tmov bl, [" + op2 + "]\n");
-			}
-			append("\tsub bl, '0'\n");
-
-			append("\tdiv bl\n");
-			append("\tadd ax, '0'\n");
-			append("\tmov [" + dest + "], al\n");
+			if((SymbolTable.idLookup(op1, 0) != null))
+				op1 = "["+op1+"]";
+			append("\tmov ebx, " + op1 + "\n");
+			append("\tdiv ebx\n\n");
 		}
 		else if(op.equals("%"))
 		{
-			if(isLiteral(op1))
-			{
-				append("\tmov ax, " + op1 + "\n");
-			}
-			else
-			{
-				append("\tmov ax, [" + op1 + "]\n");
-			}
-			append("\tsub al, '0'\n");
+			if((SymbolTable.idLookup(op2, 0) != null))
+				op2 = "["+op2+"]";
+			append("\tmov eax, " + op2 + "\n");
 			
-			if(isLiteral(op2))
-			{
-				append("\tmov bl, " + op2 + "\n");
-			}
-			else
-			{
-				append("\tmov bl, [" + op2 + "]\n");
-			}
-			append("\tsub bl, '0'\n");
-
-			append("\tdiv bl\n");
-			append("\tadd ax, '0'\n");
-			append("\tmov [" + dest + "], ah\n");
+			if((SymbolTable.idLookup(op1, 0) != null))
+				op1 = "["+op1+"]";
+			append("\tmov ebx, " + op1 + "\n");
+			append("\tdiv ebx\n");
+			append("\tmov eax, edx\n");
 		}
-		return dest;
+		append("\tmov ecx, eax\n");
+		return "ecx";
 	}
 
 	public static void dec(String type, String dest, String val)
