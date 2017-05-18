@@ -2,4 +2,6 @@
 /LexDic.class
 *.class
 *.jbe
+*.o
+*.asm
 /test.asm
