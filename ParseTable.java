@@ -6,6 +6,8 @@ import java.util.Hashtable;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
+
 public class ParseTable
 {
 	Hashtable<String, Integer> Row = new Hashtable<String, Integer>();

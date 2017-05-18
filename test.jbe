@@ -1,13 +1,16 @@
 YO!
-digits a = 33
-digits b = 2
-Sho'me a
-a = a*b
-Sho'me a
-a = a/b
-Sho'me a
-a = 100
-a = 166 % a
-Sho'me a
-a = 2 - 2 - 1
+digits a = 2
+digits b = 3
+Gimme a
+NonStop'till(a != b){
+	Sho'me "Enter num: "
+	Gimme a
+	Sho'me a
+	Check'dis(a % 2 == 0 || a == b){
+		Sho'me "Even num!"
+	} noh {
+		Sho'me "Odd num!"
+	}
+}
+Sho'me 5 % 2
 PEACEOUT!

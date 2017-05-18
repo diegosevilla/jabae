@@ -1,3 +1,5 @@
+import javax.swing.JOptionPane;
+
 public class SemanticAction
 {
 	public static void checkdec(String type, IdEntry token, int size)

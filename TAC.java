@@ -3,13 +3,15 @@ import java.io.FileWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.swing.JOptionPane;
+
 public class TAC
 {
 	static int tempcount = 8;
 	static int labelcount = 0;
 	static int datacount = 0;
 	static String data = "section .data\n\tnewline db 10\n";
-	static String bss = "\nsection .bss\nbuffer resb 10\n";
+	static String bss = "\nsection .bss\n\tnumbuff resb 8\nbuffer resb 8\n";
 	static String text = "\nsection .text\n\tglobal _start\n\n";
 	static String code = "_start:\n";
 	
@@ -66,22 +68,38 @@ public class TAC
 	
 	public static void print(String arg)
 	{
-		append("\tmov rax, 1\n");
-		append("\tmov rdi, 1\n");
 		if(isLiteral(arg)){
 			data += "\tdata"+datacount + " db " + toString(arg)+"\n";
+			append("\tmov rax, 1\n");
+			append("\tmov rdi, 1\n");
 			append("\tmov rsi, data" + datacount + "\n");
 			append("\tmov rdx, " + (arg.length()-2) + "\n");
 			datacount++;
 		} else if(SymbolTable.idLookup(arg, 0) != null){
-			if(SymbolTable.getType(arg).equals("digits"))
-				append("\t;needs convertion\n");
-			append("\tmov rsi, " + arg + "\n");
-			append("\tmov rdx, 1\n");
+			if(SymbolTable.getType(arg).equals("digits")){
+				append("\tcall clearBuffer\n");
+				append("\tmov eax, 0\n");
+				append("\tmov al, [" + arg + "]\n");
+				append("\tcall intToStr\n");
+				append("\tmov rax, 1\n");
+				append("\tmov rdi, 1\n");
+				append("\tmov rsi, numbuff\n");
+				append("\tmov rdx, 8\n");
+			} else {
+				append("\tmov rax, 1\n");
+				append("\tmov rdi, 1\n");
+				append("\tmov rsi, " + arg + "\n");
+				append("\tmov rdx, 1\n");
+			}
 		} else {
-			append("\tmov [buffer], "+arg+"\n");
-			append("\tmov rsi, buffer\n");
-			append("\tmov rdx, 1\n");
+			append("\tcall clearBuffer\n");
+			append("\tmov eax, 0\n");
+			append("\tmov al, cl\n");
+			append("\tcall intToStr\n");
+			append("\tmov rax, 1\n");
+			append("\tmov rdi, 1\n");
+			append("\tmov rsi, numbuff,\n");
+			append("\tmov rdx, 8\n");
 		}
 		append("\tsyscall\n\n");
 		
@@ -98,9 +116,10 @@ public class TAC
 		append("\tmov rax, 0\n");
 		append("\tmov rdi, 0\n");
 		append("\tmov rsi, " + arg +"\n");
-		append("\tmov rdx, 16\n");
+		append("\tmov rdx, 8\n");
 		append("\tsyscall\n\n");
-		if(SymbolTable.idLookup(arg, 0) != null){
+		
+		if(SymbolTable.getType(arg).equals("digits")){
 			append("\tmov rsi, " + arg + "\n");
 			append("\tcall strToInt\n");
 			append("\tmov [" + arg + "], eax\n\n");
@@ -113,9 +132,10 @@ public class TAC
 		{
 			append("\tmov eax, [" + val + "]\n");
 			append("\tmov [" + dest + "], eax\n\n");
-		} else {
+		} else if(isLiteral(val)){
+			append("\tmov byte ["+dest+"], "+ val +"\n\n");
+		} else 
 			append("\tmov ["+dest+"], "+ val +"\n\n");
-		}
 	}
 	
 	public static String expr(String op, String op1, String op2)
@@ -172,22 +192,20 @@ public class TAC
 
 	public static void dec(String type, String dest, String val)
 	{
-		bss += "\t"+dest + " resb 16\n";
+		bss += "\t"+dest + " resb 8\n";
 		if(!val.equals(""))
 			assignment(dest, val);
 	}
 
 	public static void compare(String op1, String op, String op2, String tval, String fval)
 	{
+		append("\txor eax, eax\n\txor ebx, ebx\n");
 		if((SymbolTable.idLookup(op1, 0) != null))
 			op1 = "["+op1+"]";
-//		else if (!isLiteral(op1)){
-//			
-//		}
-		append("\tmov al, " + op1 + "\n");
+		append("\tmov eax, " + op1 + "\n");
 		if((SymbolTable.idLookup(op2, 0) != null))
 			op2 = "["+op2+"]";
-		append("\tmov bl, " + op2 + "\n");
+		append("\tmov ebx, " + op2 + "\n");
 		append("\tcmp al, bl\n");
 		append("\t" + getJumpValue(op) + tval + "\n");
 		append("\tjmp " + fval +  "\n\n");
@@ -417,5 +435,26 @@ public class TAC
 		text += "\tendStrToInt:\n";
 		text += "\t\tret\n\n";
 		
+		text += "intToStr:\n";
+		text += "\tlea r8, [numbuff+8]\n";
+		text += "\tloopIntToStr:\n";
+		text += "\t\txor edx, edx\n";
+		text += "\t\tmov ecx, 10\n";
+		text += "\t\tdiv ecx\n";
+		text += "\t\tadd dl, '0'\n";
+		text += "\t\tdec r8\n";
+		text += "\t\tmov byte [r8], dl\n";
+		text += "\t\tcmp eax, 0\n";
+		text += "\t\tjne loopIntToStr\n";
+		text += "\tret\n\n";
+		
+		text += "clearBuffer:\n";
+		text += "\tmov esi, 8\n";
+		text += "\tstartLoop:\n";
+		text += "\t\tdec esi\n";
+		text += "\t\tmov byte [numbuff+esi], 0\n";
+		text += "\t\tcmp esi, 0\n";
+		text += "\t\tjnl startLoop\n";
+		text += "\tret\n\n";
 	}
 }
