@@ -3,15 +3,13 @@ import java.io.FileWriter;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import javax.swing.JOptionPane;
-
 public class TAC
 {
 	static int tempcount = 8;
 	static int labelcount = 0;
 	static int datacount = 0;
 	static String data = "section .data\n\tnewline db 10\n";
-	static String bss = "\nsection .bss\n";
+	static String bss = "\nsection .bss\nbuffer resb 10\n";
 	static String text = "\nsection .text\n\tglobal _start\n\n";
 	static String code = "_start:\n";
 	
@@ -76,11 +74,14 @@ public class TAC
 			append("\tmov rdx, " + (arg.length()-2) + "\n");
 			datacount++;
 		} else if(SymbolTable.idLookup(arg, 0) != null){
+			if(SymbolTable.getType(arg).equals("digits"))
+				append("\t;needs convertion\n");
 			append("\tmov rsi, " + arg + "\n");
 			append("\tmov rdx, 1\n");
 		} else {
-			append("\tmov r12, " + arg + "\n");
-			append("\tmov rsi, r12\n")
+			append("\tmov [buffer], "+arg+"\n");
+			append("\tmov rsi, buffer\n");
+			append("\tmov rdx, 1\n");
 		}
 		append("\tsyscall\n\n");
 		
@@ -119,12 +120,11 @@ public class TAC
 	
 	public static String expr(String op, String op1, String op2)
 	{
-		String dest = "";
 		if(op.equals("+") || op.equals("-"))
 		{
 			if((SymbolTable.idLookup(op2, 0) != null))
 				op2 = "["+op2+"]";
-			append("\tmov rax, " + op2 + "\n");
+			append("\tmov eax, " + op2 + "\n");
 			
 			if((SymbolTable.idLookup(op1, 0) != null))
 				op1 = "["+op1+"]";
@@ -179,17 +179,16 @@ public class TAC
 
 	public static void compare(String op1, String op, String op2, String tval, String fval)
 	{
-		append("\txor eax, eax\n");
-		append("\txor ebx, ebx\n");
-		append("\txor ecx, ecx\n");
 		if((SymbolTable.idLookup(op1, 0) != null))
 			op1 = "["+op1+"]";
-		append("\tmov eax, " + op1 + "\n");
+//		else if (!isLiteral(op1)){
+//			
+//		}
+		append("\tmov al, " + op1 + "\n");
 		if((SymbolTable.idLookup(op2, 0) != null))
 			op2 = "["+op2+"]";
-		append("\tmov ebx, " + op2 + "\n");
-		JOptionPane.showMessageDialog(null, op1+op+op2+"\n"+getJumpValue(op));
-		append("\tcmp eax, ebx\n");
+		append("\tmov bl, " + op2 + "\n");
+		append("\tcmp al, bl\n");
 		append("\t" + getJumpValue(op) + tval + "\n");
 		append("\tjmp " + fval +  "\n\n");
 
@@ -232,9 +231,11 @@ public class TAC
 		String lfalse = falselabel;
 		String rtrue = truelabel;
 		String rfalse = falselabel;
+		//String andcode = generate(left, ltrue, lfalse) + "\n" + ltrue + "\n\t" + generate(right, rtrue, rfalse);
 		generate(left, ltrue, lfalse);
-		append("\n" + ltrue +": \n");
+		append("\n" + ltrue+":\n");
 		generate(right, rtrue, rfalse);
+		//return andcode;
 	}
 
 	public static void or(ASTNode left, ASTNode right, String truelabel, String falselabel)
@@ -243,10 +244,12 @@ public class TAC
 		String lfalse = createLabel();
 		String rtrue = truelabel;
 		String rfalse = falselabel;
+		//String orcode = generate(left, ltrue, lfalse) + "\n" + lfalse + "\n\t" + generate(right, rtrue, rfalse);
 		generate(left, ltrue, lfalse);
-		append("\n" + lfalse +": \n");
+		append("\n" + lfalse + ":\n");
 		generate(right, rtrue, rfalse);
-	}
+		//return orcode;
+}
 	
 	public static void whileloop(ASTNode cond, ASTNode loopbody, String next)
 	{
@@ -289,7 +292,9 @@ public class TAC
 			case "/":
 			case "%":
 			{
-				String temp = expr(node.token , generate(node.bodyChildren.get(1), "", ""), generate(node.bodyChildren.get(0), "", ""));
+				String op1 = generate(node.bodyChildren.get(1), "", "");
+				String op2 = generate(node.bodyChildren.get(0), "", "");
+				String temp = expr(node.token , op1, op2);
 				return temp;
 			}
 			case "output":
