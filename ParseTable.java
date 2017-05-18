@@ -795,8 +795,8 @@ public class ParseTable
 					IdEntry tmpOp = postfix.remove(0);
 					ASTNode tmpNode = new ASTNode(tmpOp.name, tmpOp.token);
 					
-					tmpNode.bodyChildren.add(0,postf.remove());
-					tmpNode.bodyChildren.add(0,postf.remove());
+					tmpNode.bodyChildren.add(0,postf.pop());
+					tmpNode.bodyChildren.add(0,postf.pop());
 					
 					if(!postf.isEmpty() || !postfix.isEmpty()) {
 						postf.push(tmpNode);
@@ -804,7 +804,7 @@ public class ParseTable
 				} else {
 					//push leaf
 					IdEntry tmpOp = postfix.remove(0);
-					postf.add(new ASTNode(tmpOp.name, tmpOp.token));
+					postf.push(new ASTNode(tmpOp.name, tmpOp.token));
 				}
 			} while(!postf.isEmpty() || !postfix.isEmpty());
 		}
