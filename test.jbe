@@ -1,12 +1,13 @@
 YO!
-digits a = 33
-digits b = 2
+digits a
+Gimme a
 Sho'me a
-a = a*b
+a = a + 2
 Sho'me a
-a = a/b
+a = a - 1
 Sho'me a
-a = 100
-a = 166 % a
-Sho'me a
+Sho'me a + 2
+Check'dis(a != 65){
+	Sho'me "bebe is good"
+}
 PEACEOUT!

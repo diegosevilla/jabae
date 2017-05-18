@@ -10,11 +10,11 @@ public class TAC
 	static int tempcount = 8;
 	static int labelcount = 0;
 	static int datacount = 0;
-	static String data = "section .data\n\n";
-	static String bss = "section .bss\n\n";
-	static String text = "section .text\n\tglobal _start\n\n";
+	static String data = "section .data\n\tnewline db 10\n";
+	static String bss = "\nsection .bss\n";
+	static String text = "\nsection .text\n\tglobal _start\n\n";
 	static String code = "_start:\n";
-
+	
 	public static String toString(String arg){
 		if(arg.startsWith("\"") && arg.endsWith("\""))
 			return arg;
@@ -75,10 +75,19 @@ public class TAC
 			append("\tmov rsi, data" + datacount + "\n");
 			append("\tmov rdx, " + (arg.length()-2) + "\n");
 			datacount++;
-		} else {
+		} else if(SymbolTable.idLookup(arg, 0) != null){
 			append("\tmov rsi, " + arg + "\n");
 			append("\tmov rdx, 1\n");
+		} else {
+			append("\tmov r12, " + arg + "\n");
+			append("\tmov rsi, r12\n")
 		}
+		append("\tsyscall\n\n");
+		
+		append("\tmov rax, 1\n");
+		append("\tmov rdi, 1\n");
+		append("\tmov rsi, newline\n");
+		append("\tmov rdx, 1\n");
 		append("\tsyscall\n\n");
 		
 	}
@@ -90,38 +99,19 @@ public class TAC
 		append("\tmov rsi, " + arg +"\n");
 		append("\tmov rdx, 16\n");
 		append("\tsyscall\n\n");
-		
-		if(SymbolTable.getType(arg).equals("digits"))
-		{
-			append("\txor eax, eax\n");
-			append("\tmov ebx, 10\n");
-			append("\tmov rsi, "+arg+"\n\n");
-			append("\t"+arg+"toInt:\n");
-			append("\t\tcmp byte [rsi], 10\n");
-			append("\t\tje end"+arg+"convert\n");
-			append("\t\tcmp byte [rsi], '0'\n");
-			append("\t\tjl end"+arg+"convert\n");
-			append("\t\tcmp byte [rsi], '9'\n");
-			append("\t\tjg end"+arg+"convert\n\n");
-			append("\t\tsub byte [rsi], '0'\n");
-			append("\t\tmul ebx\n");
-			append("\t\tadd eax, [rsi]\n");
-			append("\t\tinc rsi\n");
-			append("\t\tjmp " + arg+"toInt\n\n");
-			append("\tend"+arg+"convert:\n");
-			append("\t\tmov ["+arg+"], eax\n\n");
-		
+		if(SymbolTable.idLookup(arg, 0) != null){
+			append("\tmov rsi, " + arg + "\n");
+			append("\tcall strToInt\n");
+			append("\tmov [" + arg + "], eax\n\n");
 		}
 	}
 
 	public static void assignment(String dest, String val)
 	{	
-		if(isLiteral(val))
-			append("\tmov byte [" + dest + "], " + val + "\n\n");
-		else if(SymbolTable.idLookup(val, 0) != null)
+		if(SymbolTable.idLookup(val, 0) != null)
 		{
-			append("\tmov byte al, [" + val + "]\n");
-			append("\tmov byte [" + dest + "], al\n\n");
+			append("\tmov eax, [" + val + "]\n");
+			append("\tmov [" + dest + "], eax\n\n");
 		} else {
 			append("\tmov ["+dest+"], "+ val +"\n\n");
 		}
@@ -134,7 +124,7 @@ public class TAC
 		{
 			if((SymbolTable.idLookup(op2, 0) != null))
 				op2 = "["+op2+"]";
-			append("\tmov eax, " + op2 + "\n");
+			append("\tmov rax, " + op2 + "\n");
 			
 			if((SymbolTable.idLookup(op1, 0) != null))
 				op1 = "["+op1+"]";
@@ -176,7 +166,7 @@ public class TAC
 			append("\tdiv ebx\n");
 			append("\tmov eax, edx\n");
 		}
-		append("\tmov ecx, eax\n");
+		append("\tmov ecx, eax\n\n");
 		return "ecx";
 	}
 
@@ -189,27 +179,17 @@ public class TAC
 
 	public static void compare(String op1, String op, String op2, String tval, String fval)
 	{
-		append("\n");
-		boolean op1Lit = isLiteral(op1);
-		boolean op2Lit = isLiteral(op2);
-		if(op1Lit && op2Lit)
-		{
-			append("\tmov byte al, " + op1 +"\n");
-			append("\tmov byte bl, " + op2 + "\n");
-			append("\tcmp byte al, bl\n");
-		}
-		else if(!op1Lit && op2Lit)
-		{
-			append("\tcmp byte ["+ op1 + "], " + op2 + "\n");
-		} else if(op1Lit && !op2Lit){
-			append("\tmov byte al, " + op1 + "\n");
-			append("\tcmp byte al, [" + op2 + "]\n");
-		} else
-		{
-			append("\tmov byte al, [" + op1 + "]\n");
-			append("\tcmp byte al, [" + op2 + "]\n");
-		}
-		
+		append("\txor eax, eax\n");
+		append("\txor ebx, ebx\n");
+		append("\txor ecx, ecx\n");
+		if((SymbolTable.idLookup(op1, 0) != null))
+			op1 = "["+op1+"]";
+		append("\tmov eax, " + op1 + "\n");
+		if((SymbolTable.idLookup(op2, 0) != null))
+			op2 = "["+op2+"]";
+		append("\tmov ebx, " + op2 + "\n");
+		JOptionPane.showMessageDialog(null, op1+op+op2+"\n"+getJumpValue(op));
+		append("\tcmp eax, ebx\n");
 		append("\t" + getJumpValue(op) + tval + "\n");
 		append("\tjmp " + fval +  "\n\n");
 
@@ -234,14 +214,13 @@ public class TAC
 		{
 			trueLabel = createLabel();
 			falselabel = createLabel();
-			//ifelsecode = "\t" + generate(cond, trueLabel, falselabel) + "\n" + trueLabel + "\n" + generate(ifbody, "", "") + "\n\tgoto " + next + "\n" + falselabel + "\n" + generate(elsebody, "", "")+ "\n" + next;
 			generate(cond, trueLabel, falselabel);
-			append("\n" + trueLabel + ": \n");
+			append(trueLabel + ": \n");
 			generate(ifbody, "", "");
-			append("\tjmp " + next + "\n\n");
+			append("\tjmp " + next + "\n");
 			append(falselabel + ": \n");
 			generate(elsebody, "", "");
-			append("\n" + next + ": \n");
+			append(next + ": \n");
 		}
 
 		//append(ifelsecode);
@@ -253,11 +232,9 @@ public class TAC
 		String lfalse = falselabel;
 		String rtrue = truelabel;
 		String rfalse = falselabel;
-		//String andcode = generate(left, ltrue, lfalse) + "\n" + ltrue + "\n\t" + generate(right, rtrue, rfalse);
 		generate(left, ltrue, lfalse);
-		append("\n" + ltrue);
+		append("\n" + ltrue +": \n");
 		generate(right, rtrue, rfalse);
-		//return andcode;
 	}
 
 	public static void or(ASTNode left, ASTNode right, String truelabel, String falselabel)
@@ -266,11 +243,9 @@ public class TAC
 		String lfalse = createLabel();
 		String rtrue = truelabel;
 		String rfalse = falselabel;
-		//String orcode = generate(left, ltrue, lfalse) + "\n" + lfalse + "\n\t" + generate(right, rtrue, rfalse);
 		generate(left, ltrue, lfalse);
-		append("\n" + lfalse);
+		append("\n" + lfalse +": \n");
 		generate(right, rtrue, rfalse);
-		//return orcode;
 	}
 	
 	public static void whileloop(ASTNode cond, ASTNode loopbody, String next)
@@ -399,8 +374,10 @@ public class TAC
 		return "";
 	}
 
+	
 	public static void genASM(ASTNode node, String filename)
 	{
+		createFunctions();
 		generate(node, "", "");
 		append("\tmov rax, 60\n\tmov rdi, 0\n\tsyscall\n\n");
 		try{
@@ -414,5 +391,26 @@ public class TAC
 			writer.close();
 		} catch(Exception e){}
 		//System.out.println(code);
+	}
+
+	private static void createFunctions() {
+		text += "strToInt:\n";
+		text += "\txor eax, eax\n";
+		text += "\tmov ebx, 10\n\n";
+		text += "\tstartStrToInt: \n";
+		text += "\t\tcmp byte [rsi], 10\n";
+		text += "\t\tje endStrToInt\n";
+		text += "\t\tcmp byte [rsi], '0'\n";
+		text += "\t\tjl endStrToInt\n";
+		text += "\t\tcmp byte [rsi], '9'\n";
+		text += "\t\tjg endStrToInt\n\n";
+		text += "\t\tsub byte [rsi], '0'\n";
+		text += "\t\tmul ebx\n";
+		text += "\t\tadd eax, [rsi]\n";
+		text += "\t\tinc rsi\n";
+		text += "\t\tjmp startStrToInt\n\n";
+		text += "\tendStrToInt:\n";
+		text += "\t\tret\n\n";
+		
 	}
 }
