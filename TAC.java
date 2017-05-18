@@ -10,15 +10,17 @@ public class TAC
 	static int tempcount = 8;
 	static int labelcount = 0;
 	static int datacount = 0;
-	static String data = "section .data\n\tnewline db 10\n";
-	static String bss = "\nsection .bss\n\tnumbuff resb 8\nbuffer resb 8\n";
+	static String data = "";
+	static String bss = "\nsection .bss\n\tnumbuff resb 8\n\tbuffer resb 8\n";
 	static String text = "\nsection .text\n\tglobal _start\n\n";
 	static String code = "_start:\n";
 	
 	public static String toString(String arg){
 		if(arg.startsWith("\"") && arg.endsWith("\""))
 			return arg;
-		else 
+		else if(arg.startsWith("\'") && arg.endsWith("\'"))
+			return "\"" + arg.charAt(1) + "\"";
+		else	
 			return "\""+ arg + "\"";
 	}
 	
@@ -69,7 +71,7 @@ public class TAC
 	public static void print(String arg)
 	{
 		if(isLiteral(arg)){
-			data += "\tdata"+datacount + " db " + toString(arg)+"\n";
+			data = "\tdata"+datacount + " db " + toString(arg)+"\n" + data;
 			append("\tmov rax, 1\n");
 			append("\tmov rdi, 1\n");
 			append("\tmov rsi, data" + datacount + "\n");
@@ -135,57 +137,42 @@ public class TAC
 		} else if(isLiteral(val)){
 			append("\tmov byte ["+dest+"], "+ val +"\n\n");
 		} else 
-			append("\tmov ["+dest+"], "+ val +"\n\n");
+			append("\tmov ["+dest+"], cl\n\n");
 	}
 	
 	public static String expr(String op, String op1, String op2)
 	{
-		if(op.equals("+") || op.equals("-"))
+		append("\txor eax, eax\n\txor ebx, ebx\n\txor edx, edx\n");
+		
+		if((SymbolTable.idLookup(op2, 0) != null))
+			op2 = "["+op2+"]";
+		append("\tmov al, " + op2 + "\n");
+		
+		if((SymbolTable.idLookup(op1, 0) != null))
+			op1 = "["+op1+"]";
+		append("\tmov bl, " + op1 + "\n");
+		
+		if(op.equals("+"))
+		{	
+			append("\tadd eax, ebx\n");
+		} else if (op.equals("-"))
 		{
-			if((SymbolTable.idLookup(op2, 0) != null))
-				op2 = "["+op2+"]";
-			append("\tmov eax, " + op2 + "\n");
-			
-			if((SymbolTable.idLookup(op1, 0) != null))
-				op1 = "["+op1+"]";
-			append("\tmov ebx, " + op1 + "\n");
-			
-			append(op.equals("+")? "\tadd eax, ebx\n" : "\tsub eax, ebx\n");
+			append("\tsub eax, ebx\n");
 		}
 		else if(op.equals("*"))
 		{
-			if((SymbolTable.idLookup(op2, 0) != null))
-				op2 = "["+op2+"]";
-			append("\tmov eax, " + op2 + "\n");
-			
-			if((SymbolTable.idLookup(op1, 0) != null))
-				op1 = "["+op1+"]";
-			append("\tmov ebx, " + op1 + "\n");
 			append("\tmul ebx\n\n");
 		}
 		else if(op.equals("/"))
 		{
-			if((SymbolTable.idLookup(op2, 0) != null))
-				op2 = "["+op2+"]";
-			append("\tmov eax, " + op2 + "\n");
-			
-			if((SymbolTable.idLookup(op1, 0) != null))
-				op1 = "["+op1+"]";
-			append("\tmov ebx, " + op1 + "\n");
 			append("\tdiv ebx\n\n");
 		}
 		else if(op.equals("%"))
 		{
-			if((SymbolTable.idLookup(op2, 0) != null))
-				op2 = "["+op2+"]";
-			append("\tmov eax, " + op2 + "\n");
-			
-			if((SymbolTable.idLookup(op1, 0) != null))
-				op1 = "["+op1+"]";
-			append("\tmov ebx, " + op1 + "\n");
 			append("\tdiv ebx\n");
 			append("\tmov eax, edx\n");
 		}
+		append("\txor ecx, ecx\n");
 		append("\tmov ecx, eax\n\n");
 		return "ecx";
 	}
@@ -409,7 +396,7 @@ public class TAC
 			file.createNewFile();
 
 			FileWriter writer = new FileWriter(file);
-			writer.write(data+bss+text+code);
+			writer.write("section .data\n\tnewline db 10\n" + data+bss+text+code);
 			writer.flush();
 			writer.close();
 		} catch(Exception e){}

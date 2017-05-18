@@ -1,16 +1,15 @@
 YO!
-digits a = 2
-digits b = 3
-Gimme a
-NonStop'till(a != b){
-	Sho'me "Enter num: "
+
+digits a
+digits b = 255
+Do'dis{
 	Gimme a
 	Sho'me a
-	Check'dis(a % 2 == 0 || a == b){
-		Sho'me "Even num!"
+	Check'dis(a % 2 == 0){
+		Sho'me "Even"
 	} noh {
-		Sho'me "Odd num!"
+		Sho'me "Odd"
 	}
-}
-Sho'me 5 % 2
+}NonStop'till(a != b)
+Sho'me a / b
 PEACEOUT!

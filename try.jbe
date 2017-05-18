@@ -1,12 +1,89 @@
 YO!
-Check'dis(2 < 2) {
-  ride b
-  a = a+b
+digits a
+digits b
+digits c
+digits d = 1
+digits m
+
+//part 1
+Sho'me "Enter a: "
+Gimme a
+Sho'me "Enter b: "
+Gimme b
+
+
+Sho'me a + b
+Sho'me a - b
+Sho'me a * b
+Sho'me a / b
+Sho'me a % b
+
+
+//part 2
+
+Gimme a
+Gimme b
+
+Check'dis(a > b){
+	Sho'me "a>b"
 }
-Check'dis(2 < 2) {
-  ride c
-  a = a+b
+
+
+Gimme a
+Gimme b
+
+
+Check'dis(a >= b){
+	Sho'me "a>=b"
 }
-ride a
-ride a
-PEACE'OUT!
+
+
+Gimme a
+Gimme b
+
+Check'dis(a < b){
+	Sho'me "a<b"
+}
+
+
+Gimme a
+Gimme b
+
+Check'dis(a <= b){
+	Sho'me "a<=b"
+}
+
+
+Gimme a
+Gimme b
+
+Check'dis(a == b){
+	Sho'me "a==b"
+}
+
+
+Gimme a
+Gimme b
+
+Check'dis(a != b){
+	Sho'me "a!=b"
+}
+
+
+//part 3
+Sho'me "Enter n" 
+Gimme c 
+
+Sho'me "Enter m"
+Gimme m
+
+NonStop'till(d <= c){
+	Check'dis(d % m == 0){
+		Sho'me d
+	} noh {
+		Sho'me "*"
+	}
+	d = d + 1
+}
+
+PEACEOUT!
