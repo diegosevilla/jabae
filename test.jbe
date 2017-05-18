@@ -1,0 +1,13 @@
+YO!
+digits a = 33
+digits b = 2
+Sho'me a
+a = a*b
+Sho'me a
+a = a/b
+Sho'me a
+a = 100
+a = 166 % a
+Sho'me a
+a = 2 - 2 - 1
+PEACEOUT!
